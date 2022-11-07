@@ -23,7 +23,7 @@ function Header() {
 
   const [isHovering, setIsHovering] = useState(null);
   const dispatch = useDispatch()
-  const handleMouseover = () => {
+  const handleMouseover = (event) => {
     setIsHovering(true)
   }
   const handleMouseout = () => {
@@ -69,7 +69,7 @@ function Header() {
           </Nav>
         </Container>
       </Navbar>
-      <Container className='cartContainer'>
+      <Container className='cartContainer' >
         <div
           className={isHovering ? 'displayCartShow' : 'displaycartnone'} >
           <div className='displaycart shadow   bg-white rounde'>
@@ -79,7 +79,7 @@ function Header() {
            {itemTotal  === 0 ? '' :  <FaWindowClose className="closeIcon" onClick={handleMouseout} />}  
                 {cartsItem.carts.map((product, id) => (
                
-                  <Card style={{ width: 200 }} className='p-2'  >
+                  <Card style={{ width: 200 }} className='p-2' >
    
    <FaTrash  className='trashicon' onClick={() => handleDelete(id)} />
                     

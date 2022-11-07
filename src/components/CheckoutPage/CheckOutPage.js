@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Container, Row, Col } from "react-bootstrap";
 import BillingForm from './BillingForm'
 import { CheckFormData } from '../../Redux/Action/GetCheckFormData'
-import { PaymentGateway } from '../../Redux/Action/GetCheOutPageApi'
+import { PaymentGateway, ShippingMethod } from '../../Redux/Action/GetCheOutPageApi'
 import Accordion from 'react-bootstrap/Accordion';
 import './CheckOutPage.css'
 
@@ -14,14 +14,22 @@ const CheckOutPage = () => {
     const checkoutformdata = useSelector((state) => state?.CheckOutFormData)
     console.log("checkoutformdata========>", checkoutformdata.firstName);
     const paymentdata = useSelector((state) => state?.CheckOutDataReducer?.PaymentGatewayData)
+    const ShippingData = useSelector((state) => state?.CheckOutDataReducer?.ShippingApiData)
+    console.log("ShippingData=======>", ShippingData);
 
     console.log("paymentdataapi=========>", paymentdata);
     const [test, setTest] = useState(null)
     console.log("cartdata======>", cartdata.carts);
     const [validation, setvalidation] = useState(false)
     const [shipping, setShipping] = useState(null)
+    const [shippininput, setShippingInput] = useState(null)
+    console.log("shippinginputvalue====>", shippininput);
 
     let ordercartdata = cartdata.carts
+
+
+
+
 
     const handleSubmit = (values) => {
         console.log("values======>", values);
@@ -35,11 +43,24 @@ const CheckOutPage = () => {
             data1: ordercartdata
         }))
 
-
-
     }
+
+
+    const handleChange = (e) => {
+
+        setShippingInput(e.target.value)
+        const getshippingmethod = ShippingData.find((item) => item.title === e.target.value)
+        if (getshippingmethod) {
+        setShippingInput(getshippingmethod)
+        }
+
+
+    }   
     useEffect(() => {
         dispatch(PaymentGateway())
+    }, [])
+    useEffect(() => {
+        dispatch(ShippingMethod())
     }, [])
 
 
@@ -66,9 +87,8 @@ const CheckOutPage = () => {
                     {!checkoutformdata.shipping.Shipping_lastName ? <div> shipping LastName  is a required field.</div> : null}
                     {!checkoutformdata.shipping.Shipping_Streetaddress ? <div> shipping Streetaddress  is a required field.</div> : null}
                     {!checkoutformdata.shipping.Shipping_city ? <div> shipping City  is a required field.</div> : null}
-                    {!checkoutformdata.shipping.Shipping_pincode? <div> shipping Pincode  is a required field.</div> : null}
-                    {/* {!checkoutformdata.shipping.Shipping_phone? <div> shipping Phone  is a required field.</div> : null}
-                    {!checkoutformdata.shipping.Shipping_email? <div> shipping Email  is a required field.</div> : null} */}
+                    {!checkoutformdata.shipping.Shipping_pincode ? <div> shipping Pincode  is a required field.</div> : null}
+
 
 
                 </div> : null}
@@ -78,7 +98,7 @@ const CheckOutPage = () => {
 
                         <div>
                             <h3>Billing details</h3>
-                            <BillingForm onSubmit={handleSubmit} prefix="" />
+                            <BillingForm onSubmit={handleSubmit} prefix="" excludes={""} />
                             <Row>
                                 <Col md={11}>
                                     <div className="control mt-3">
@@ -95,7 +115,7 @@ const CheckOutPage = () => {
                                     </div>
                                 </Col>
                             </Row>
-                            {shipping ? <BillingForm prefix="Shipping_" onSubmit={handleSubmit} /> : null}
+                            {shipping ? <BillingForm prefix="Shipping_" onSubmit={handleSubmit} excludes={["phone", "email", "notes"]} /> : null}
                         </div>
                     </Col>
                     <Col className="mt-5 g-4" md={5}>
@@ -105,6 +125,7 @@ const CheckOutPage = () => {
                                 <Col md={7} >
 
                                     <p>Product</p>
+
 
                                 </Col>
                                 <Col md={5}>
@@ -136,52 +157,87 @@ const CheckOutPage = () => {
                         <Row>
                             <Col md={7}>
                                 <div className="displaydata">
-                                    <b>
-                                        <p>
-                                            SubTotal:
-                                        </p>
-
-                                    </b>
-
+                                    <p>
+                                        SubTotal:
+                                    </p>
                                 </div>
                             </Col>
                             <Col md={5}>
                                 <div className="displaydata">
-                                    <b>
-                                        <p>
-                                            ${cartdata.cartTotal}.00
-                                        </p>
-                                    </b>
+
+                                    <p>
+                                        ${cartdata.cartTotal}.00
+                                    </p>
+
 
                                 </div>
 
 
                             </Col>
                         </Row>
+                                {applycouponsdData1  ?
                         <Row>
-                            <Col md={7}>
-                                {applycouponsdData1 ?
+                           
+                           <Col md={7}>
                                     <div className="displaydata">
-                                        <b>
-                                            <p>
-                                                Coupons:{applycouponsdData1.code}
-                                            </p>
 
-                                        </b>
-                                    </div> : null}
-                            </Col>
-                            <Col md={5}>
-                                <div className="displaydata">
-                                    <b>
                                         <p>
-                                            -${applycouponsdData1.amount}
+                                            Coupons:{applycouponsdData1.code}
                                         </p>
 
-                                    </b>
+
+                                    </div> 
+                            </Col>
+                            <Col md={5}>
+
+                                <div className="displaydata">
+
+                                    <p>
+                                        {"-"}${applycouponsdData1.amount}
+                                    </p>
+
+
                                 </div>
 
                             </Col>
+                            
+                        </Row>
+                            : ""}
+                        {/* shipping data */}
+                        <Row>
+                            <Col>
+                                <div className="displaydata">
 
+                                    <p>Shipping</p>
+
+                                </div>
+                            </Col>
+                            <Col>
+
+                                <div className="shippingdata">
+                                    {ShippingData.map((data) => (
+
+                                        <label>
+                                            <input
+                                                onChange={(e) => handleChange(e)}
+                                                id="radio1"
+                                                name="radiobutton"
+                                                type="radio"
+                                                value={data.title}
+                                            />
+
+                                            <span>{data.title} {data?.settings?.cost ? <span> ${data?.settings?.cost?.value}.00</span> : null}</span>
+                                            {/* {data.title === "Same day delivery"? <span>${data?.settings?.cost?.value}.00</span> : ''}  */}
+
+
+                                        </label>
+
+
+                                    ))}
+                                </div>
+
+
+                            </Col>
                         </Row>
                         <Row>
                             <Col md={7}>
@@ -200,7 +256,9 @@ const CheckOutPage = () => {
                                     <div className="displaydata">
                                         <b>
                                             <p>
-                                                ${cartdata.cartTotal - applycouponsdData1.amount}.00
+
+                                                {shippininput?.settings?.cost ? <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount) + parseInt(shippininput?.settings?.cost?.value)}.00</div> : <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount)}.00</div>}
+
                                             </p>
                                         </b>
 

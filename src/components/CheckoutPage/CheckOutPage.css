@@ -16,6 +16,7 @@
 }
 .displaydata{
     padding: 20px;
+    padding-left: 0px;
 
 }
 .displaytotal p {
@@ -55,8 +56,19 @@
 .inputdata {
     background-color: #f8f8f8;
 }
-.checkbox{
+.checkbox{                                                                                                                                                      
     /* width: 18px; */
     margin-top: 10px;
     /* margin-left: 200px; */
+}
+.shippingdata span{
+    font-size: 20px;
+    margin-left: 5px;
+}
+.shippingdata{
+    margin-left: 40px;
+ 
+}
+.displaydata h6{
+    margin-left: 20px;
 }

@@ -1,4 +1,4 @@
-import React , {useState} from "react";
+import React, { useState } from "react";
 import { useEffect } from "react";
 import { Col, Row } from "react-bootstrap";
 import { Field, reduxForm } from 'redux-form'
@@ -6,18 +6,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { GetCountries } from '../../Redux/Action/GetCheOutPageApi'
 import './BillingForm.css'
 function BillingForm(props) {
-  const {handleSubmit ,prefix}=props || ''
-  
+  const { handleSubmit, prefix, excludes } = props
+
 
   const dispatch = useDispatch()
   const CountriesData = useSelector((state) => state?.CheckOutDataReducer?.CountriesData)
-  
-  const  [selectedCountry, setSelectedCountry] = useState();
-  const [shipping ,setShipping]  = useState(null)
+
+  const [selectedCountry, setSelectedCountry] = useState();
   
 
-  const availableState = CountriesData.find((c) => c.name === selectedCountry )
- 
+
+  const availableState = CountriesData.find((c) => c.name === selectedCountry)
+
 
 
   useEffect(() => {
@@ -35,7 +35,7 @@ function BillingForm(props) {
     <div>
 
       <form className="form" onSubmit={handleSubmit} >
-   <Row>
+        <Row>
           <Col md={6}>
             <div className="control">
               <label>First Name</label>
@@ -86,13 +86,13 @@ function BillingForm(props) {
                 name={`${prefix}Country`}
                 component="select"
                 value={selectedCountry}
-                onChange={(e) => setSelectedCountry(e.target.value) }
+                onChange={(e) => setSelectedCountry(e.target.value)}
               >
                 <option>Select Your Country</option>
-                {CountriesData.map((country,id) => (
-                <>
-                  <option key={id} value={country.name}>{country.name}</option></>
-               )  )}
+                {CountriesData.map((country, id) => (
+                  <>
+                    <option key={id} value={country.name}>{country.name}</option></>
+                ))}
 
 
               </Field>
@@ -133,15 +133,15 @@ function BillingForm(props) {
               <Field
                 name={`${prefix}state`}
                 component="select"
-                  value={availableState}
+                value={availableState}
 
               >
                 <option>Select Your state</option>
-                 {availableState?.states?.map((state,id) => (
-              
+                {availableState?.states?.map((state, id) => (
+
                   <option key={id} value={state.name}>{state.name}</option>
-               )  )}
-               </Field>
+                ))}
+              </Field>
             </div>
           </div>
 
@@ -158,48 +158,56 @@ function BillingForm(props) {
               />
             </div>
           </div>
-          <div className="control">
-            <label>Phone</label>
-            <abbr className="required" title="required">*</abbr>
+          {!excludes.includes("phone") ?
 
-            <div>
-              <Field
-                name={`${prefix}phone`}
-                component="input"
-                type="tel"
-                placeholder="Phone"
-              />
-            </div>
-          </div>
-          <div className="control">
-            <label>Email address</label>
-            <abbr className="required" title="required">*</abbr>
+            <div className="control">
+              <label>Phone</label>
+              <abbr className="required" title="required">*</abbr>
 
-            <div>
-              <Field
-                name={`${prefix}email`}
-                component="input"
-                type="email"
-                placeholder="Email address"
-              />
-            </div>
-          </div>
-         
+              <div>
+                <Field
+                  name={`${prefix}phone`}
+                  component="input"
+                  type="tel"
+                  placeholder="Phone"
+                />
+              </div>
+            </div> : ''
+          }
+          {!excludes.includes("email") ?
+            <div className="control">
+              <label>Email address</label>
+              <abbr className="required" title="required">*</abbr>
+
+              <div>
+                <Field
+                  name={`${prefix}email`}
+                  component="input"
+                  type="email"
+                  placeholder="Email address"
+                />
+              </div>
+            </div> : ''}
+
         </Row>
-      <div className="control">
-    
-        <label>Order notes (optional)</label>
-        <div>
-          <Field
-            name="notes"
-            component="textarea"
-            placeholder="Notes about your orders,e.g. special notes for delivery"
-            />
-        </div>
-      </div>
-    <button type="submit" className="submitbtn">submit</button>
+        {!excludes.includes("notes") ?
+          <div className="control">
 
-            </form>
+            <label>Order notes (optional)</label>
+            <div>
+              <Field
+                name="notes"
+                component="textarea"
+                placeholder="Notes about your orders,e.g. special notes for delivery"
+              />
+            </div>
+          </div> : ''
+        }
+      
+
+        <button type="submit" className="submitbtn">submit</button>
+
+      </form>
     </div>
   )
 }

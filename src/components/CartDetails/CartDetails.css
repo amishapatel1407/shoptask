@@ -87,4 +87,8 @@ a.removelink {
     background-color: black;
     color: wheat;
 }
+.dispalyshipping span{
+    font-size: 20px;
+    margin-left: 5px;
+}
 

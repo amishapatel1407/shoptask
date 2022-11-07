@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Col, Row, Card, Button, Container } from "react-bootstrap";
-import { FaTrash,FaArrowRight } from 'react-icons/fa'
+import { FaTrash, FaArrowRight } from 'react-icons/fa'
 import { deleteItem, updateCartQty } from '../../Redux/Action/CartAction'
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useNavigate } from "react-router-dom";
 import './CartDetails.css'
-import { GetCoupons,ApplyCouponsData } from '../../Redux/Action/GetCoupons'
+import { GetCoupons, ApplyCouponsData } from '../../Redux/Action/GetCoupons'
 import { useEffect } from "react";
 function CartDetails() {
 
@@ -14,15 +14,18 @@ function CartDetails() {
     console.log("cartDetails===>", cartDetails);
     const Cartsubtotal = cartDetails.cartTotal;
     const [input, setInput] = useState(null)
-    const [coupons, setCoupons] = useState(null)
     const [alert, setAlert] = useState(null)
     const [wrog, setWrong] = useState(null)
     const [deleteitem, setdeleteItem] = useState(null)
     const GetCouponsdata = useSelector((state) => state?.CouponsReducer)
+    const ShippingData = useSelector((state) => state?.CheckOutDataReducer?.ShippingApiData)
+    const applycouponsdData1 = useSelector((state) => state?.CouponsReducer?.AppluCouponsData)
     // const [resdata, setResponsedata] = useState(null)
+    const [shippininput, setShippingInput] = useState(ShippingData)
+    const [coupons, setCoupons] = useState(null)
     const dispatch = useDispatch();
     const navigate = useNavigate()
-
+console.log("shippininput==>",shippininput);
     const handlecartpageinput = (e, cartIndex) => {
         console.log("asdasd", e.target.value, cartIndex);
         dispatch(updateCartQty({
@@ -34,81 +37,93 @@ function CartDetails() {
         navigate('/shop')
 
     }
-const navigatetocheckoutpage = () => {
-    navigate('/CheckOut')
-}
+    const navigatetocheckoutpage = () => {
+        navigate('/CheckOut')
+    }
 
-const handleDelete = (id, cartdata) => {
-    dispatch(deleteItem(id))
-    setAlert("delete")
-    window.scroll(0,0)
-    setdeleteItem(cartdata)
-       
+
+
+
+    const handleDelete = (id, cartdata) => {
+        dispatch(deleteItem(id))
+        setAlert("delete")
+        window.scroll(0, 0)
+        setdeleteItem(cartdata)
+
+
         const updateresult = []
         cartDetails.carts.map((data) => {
             updateresult.push(data.id)
-          
+
         })
 
 
-let res = updateresult.map((ids) => ids).findIndex((id) => id === cartdata.id)
+        let res = updateresult.map((ids) => ids).findIndex((id) => id === cartdata.id)
 
-console.log("res",res);
-updateresult.splice(res,1)
-        console.log("updateresult===== splice",updateresult);
-       
+        console.log("res", res);
+        updateresult.splice(res, 1)
+        console.log("updateresult===== splice", updateresult);
+
         var input2 = input
-        var  inputlower1 = input2.toLowerCase()
-        
+        var inputlower1 = input2.toLowerCase()
+
         var myRe123 = GetCouponsdata.CouponsData.find((item) => item.code === inputlower1)
-       
+
         setCoupons('')
         let check = false
-       if(myRe123) {
+        if (myRe123) {
 
-        if ( myRe123.product_ids.length > 0) {
-            console.log("updateresult map" ,updateresult);
-            myRe123.product_ids.map((pid) => {
-                if (updateresult.indexOf(pid) > -1 ) {
-                    setCoupons(myRe123)
-                  
-                    check  = false
-                    return ;
-                }
-                else {
-                    setCoupons('')
-                   
-                    check = true
-                }
-            })
+            if (myRe123.product_ids.length > 0) {
+                console.log("updateresult map", updateresult);
+                myRe123.product_ids.map((pid) => {
+                    if (updateresult.indexOf(pid) > -1) {
+                        setCoupons(myRe123)
+
+                        check = false
+                        return;
+                    }
+                    else {
+                        setCoupons('')
+
+                        check = true
+                    }
+                })
+            }
+
+
+            else {
+                setCoupons(myRe123)
+            }
         }
-        
-        
-        else{
-            setCoupons(myRe123)
-        }          
-    }  
-    if(check){
-        setAlert("does not Applicable")
-       }
-       }    
-
-
-
-        
-    
-        useEffect(() => {
-
-            dispatch(GetCoupons()) 
-           
-        }, [])
-
-        const inputTyp =(e) =>{
-            setInput(e.target.value)
+        if (check) {
+            setAlert("does not Applicable")
         }
-        
-        const ApplyCoupons = () =>  {
-           
+    }
+
+
+
+    useEffect(() => {
+
+        dispatch(GetCoupons())
+
+    }, [])
+// for shipping data//
+    const handleChange = (e) => {
+
+        setShippingInput(e.target.value)
+        const getshippingmethod = ShippingData.find((item) => item.title === e.target.value)
+        if (getshippingmethod) {
+
+            setShippingInput(getshippingmethod)
+        }
+    }
+// ----------------//
+    const inputTyp = (e) => {
+        setInput(e.target.value)
+    }
+
+    const ApplyCoupons = () => {
+
         var inpute = input
         var inputlower = inpute.toLowerCase();
 
@@ -122,14 +137,14 @@ updateresult.splice(res,1)
             setAlert("successfully");
             setCoupons(myRe);
             dispatch(ApplyCouponsData(myRe))
-            window.scroll(0,0)
+            window.scroll(0, 0)
             if (coupons && myRe.code === inputlower) {
                 console.log("Coupon code already applied!")
 
                 // setAlert("applied")
             }
 
-           
+
         }
 
 
@@ -138,8 +153,8 @@ updateresult.splice(res,1)
             setWrong(input)
             setAlert("wrog")
             setCoupons(null);
-           
-            window.scroll(0,0)
+
+            window.scroll(0, 0)
             if (myRe.product_ids.length) {
 
                 cartDetails.carts.map((ids) => {
@@ -147,33 +162,34 @@ updateresult.splice(res,1)
                         setAlert("successfully");
                         setCoupons(myRe);
                         dispatch(ApplyCouponsData(myRe))
-                        window.scroll(0,0)
+                        window.scroll(0, 0)
                         check1 = true
                         console.log("successfully");
 
                     }
-                    
-                    
+
+
                 })
             }
-          
-            if(!check1){
-                
-                    setAlert("does not Applicable")
-                    window.scroll(0,0)
+
+            if (!check1) {
+
+                setAlert("does not Applicable")
+                window.scroll(0, 0)
             }
-         
+
         }
-        
+
     }
     const remove = () => {
-       
+
         setInput("")
         console.log("remove");
         setAlert("remove")
-         setCoupons(null);
-         
-      
+        setCoupons(null);
+        dispatch(ApplyCouponsData())
+
+
 
 
 
@@ -215,8 +231,8 @@ updateresult.splice(res,1)
                 }
                 {
                     alert === "does not Applicable" ? <div className="alert alert-danger" role="alert">
-           Sorry, this coupon is not applicable to selected products.
-                </div> : ''
+                        Sorry, this coupon is not applicable to selected products.
+                    </div> : ''
                 }
 
 
@@ -224,7 +240,7 @@ updateresult.splice(res,1)
                 <div className="cartheadingcss">
 
                     <Row>
-                        
+
                         <Col md={2}>
 
                         </Col>
@@ -298,17 +314,17 @@ updateresult.splice(res,1)
 
 
                 <div>
-                    {  
+                    {
                         coupons ?
-                      <>
-                        <input type="text"  value = {coupons.code}  className="coupaninput" name="coupon" placeholder="Enter coupan a code" />  <button type="button" className="applycoupan" onClick={()=>remove()}> remove</button>
-                        </> : 
-                        <>
-                         <input type="text"  className="coupaninput" value={input} onChange= {(e) => inputTyp(e)} name="coupon" placeholder="Enter coupan a code" />
-                    
-                    <button type="button" className="applycoupan"  onClick={() => ApplyCoupons()}> Apply Coupan</button>
-                        </>
-}
+                            <>
+                                <input type="text" value={coupons.code} className="coupaninput" name="coupon" placeholder="Enter coupan a code" />  <button type="button" className="applycoupan" onClick={() => remove()}> remove</button>
+                            </> :
+                            <>
+                                <input type="text" className="coupaninput" value={input} onChange={(e) => inputTyp(e)} name="coupon" placeholder="Enter coupan a code" />
+
+                                <button type="button" className="applycoupan" onClick={() => ApplyCoupons()}> Apply Coupan</button>
+                            </>
+                    }
 
                 </div>
 
@@ -320,22 +336,22 @@ updateresult.splice(res,1)
 
                     </Row>
                     <Row className=' bg-light'>
-                        <Col md={6} className=' bg-light'>
+                        <Col md={6} className='g-3 bg-light'>
                             <h5>SubTotal :</h5>
                         </Col>
-                        <Col>
-                            <h5>{Cartsubtotal}</h5> </Col>
-                    </Row>
+                        <Col className="g-3">
+                            <h5>${Cartsubtotal}.00</h5> </Col>
+                    </Row>  
                     <Row className=' bg-light'>
-                        {coupons ?
+                        {applycouponsdData1 ?
                             <div className="d-flex justify-content-around " >
-                                <Col md={6}>
-                                    <h5 className="mb-0 ">Coupon:{coupons.code}
+                                <Col md={6} className='g-3'>
+                                    <h5>Coupon:{applycouponsdData1.code}
                                     </h5>
                                 </Col>
-                                <Col md={2}>
+                                <Col md={2} className='g-3'>
                                     <h5>
-                                        -${coupons.amount}
+                                        -${applycouponsdData1.amount}
 
                                     </h5>
                                 </Col>
@@ -353,27 +369,67 @@ updateresult.splice(res,1)
                             ""}
                     </Row>
                     <Row className=' bg-light'>
+                        <Col className="g-3">
+                            <div>
 
-                        {coupons ?
+                                <h5>Shipping</h5>
+
+                            </div>
+                        </Col>
+                        <Col className="g-3" >
+
+                            {ShippingData.map((data) => (
+                                <div className="dispalyshipping ">
+
+                                    <h5>
+                                        <label>
+                                            <input
+                                                onChange={(e) => handleChange(e)}
+                                                id="radio1"
+                                                name="radiobutton"
+                                                type="radio"
+                                                // checked={shippininput ? shippininput.title :null}
+                                                value={data.title}
+                                            />
+
+                                            <span>{data.title} {data?.settings?.cost ? <span> ${data?.settings?.cost?.value}.00</span> : null}</span>
+                                  
+
+
+                                        </label>
+                                    </h5>
+
+
+                                </div>
+                            ))}
+
+
+                        </Col>
+                    </Row>
+                    <Row className=' bg-light'>
+ 
+                        {applycouponsdData1 ?
                             <>
 
-                                <Col md={6}>
+                                <Col className="g-3" md={6}>
                                     <h5>Total: </h5>
                                 </Col>
-                                <Col>
-                                    <h5>{Cartsubtotal - coupons.amount} </h5>
+                                <Col className="g-3">
+                               
+                                    {shippininput?.settings?.cost ? <h4>${parseInt(Cartsubtotal - applycouponsdData1.amount) + parseInt(shippininput?.settings?.cost?.value)}.00</h4> : <h4>${parseInt(Cartsubtotal - applycouponsdData1.amount)}.00</h4>}
                                 </Col>
 
                             </>
 
                             :
                             <>
-                                <Col>
+                                <Col className="g-3">
                                     <h5>Total:</h5>
 
                                 </Col>
-                                <Col>
-                                    <h5>{Cartsubtotal}</h5>
+                                <Col className="g-3">
+                              
+                                    {shippininput?.settings?.cost ? <h4>${parseInt(Cartsubtotal) + parseInt(shippininput?.settings?.cost?.value)}.00</h4> : <h4>${(Cartsubtotal)}.00</h4>}
 
                                 </Col>
                             </>
@@ -410,4 +466,5 @@ updateresult.splice(res,1)
     )
 }
 
-export default CartDetails
+
+export default CartDetails;

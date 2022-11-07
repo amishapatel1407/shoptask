@@ -78,7 +78,7 @@ const CartReducer = (state = init, action) => {
       }
     case UPDATE_CART_QTY:
       const data = action.payload
-      console.log("asdasdasdasdadsasdsd", state);
+      console.log("asdasdasdasdadsasdsd", data);
       // state.carts[data.id].quantity = data.qty
       let newState = state;
       let itemIndex = newState.carts.findIndex(item => item.id === data.id)
@@ -98,6 +98,7 @@ const CartReducer = (state = init, action) => {
       })
       console.log("totals",Totals);
       newState.cartTotal = Totals
+      // newState.itemTotal =   data.qty
       return {
         
         ...newState 

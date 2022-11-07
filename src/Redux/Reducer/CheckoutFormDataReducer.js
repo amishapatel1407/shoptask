@@ -20,8 +20,7 @@ const init = {
         // address_2: "",
         Shipping_city: "",
         Shipping_pincode: "",
-        Shipping_phone :"",
-        Shipping_email:"",
+     
        Shipping_Country: "",
        Shipping_state: "",
       },
@@ -55,8 +54,6 @@ const init = {
                 Shipping_Streetaddress : valuesdata.Shipping_Streetaddress,
                 Shipping_city : valuesdata.Shipping_city,
                 Shipping_pincode : valuesdata.Shipping_pincode,
-                Shipping_phone : valuesdata.Shipping_phone,
-                Shipping_email : valuesdata.Shipping_email,
                 // Shipping_Country : valuesdata.Shipping_Country,
                 // Shipping_state : valuesdata.Shipping_state
               }
