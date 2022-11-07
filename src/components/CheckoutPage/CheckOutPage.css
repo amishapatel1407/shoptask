@@ -1,0 +1,62 @@
+.orderHeading p{
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom:10px ;
+  
+}
+.orderHeading{
+    background-color:#f8f8f8;
+    padding: 20px;
+    width: 100%;
+}
+.displaydata p{
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom:10px ;
+}
+.displaydata{
+    padding: 20px;
+
+}
+.displaytotal p {
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom:10px ;
+}
+.displaytotal{
+    padding: 20px;
+}
+.palceorderbtn{
+    background-color: black;
+    color: wheat;
+    width: 400px;
+    padding: 15px 10px;
+    font-size: 25px;
+}
+.displaypaymentdata{
+  
+ 
+    background-color: #f8f8f8;
+}
+.displaypaymentdata input{
+    margin-left: 20px;
+}
+.displaypaymentdata span{
+    font-size:20px;
+    margin-left: 20px;
+}
+
+.displaypaymentdata label{
+    color: black;
+    padding-bottom: 10px;
+
+}
+
+.inputdata {
+    background-color: #f8f8f8;
+}
+.checkbox{
+    /* width: 18px; */
+    margin-top: 10px;
+    /* margin-left: 200px; */
+}
