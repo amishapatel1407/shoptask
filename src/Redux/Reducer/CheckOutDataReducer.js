@@ -1,14 +1,15 @@
-import { GET_COUNTRIES,PAYMENT_GATEWAY, GET_SHIPPING_METHOD} from "../ActionTypes/ActionType";
+import { GET_COUNTRIES,PAYMENT_GATEWAY, GET_SHIPPING_METHOD, SELECTED_SHIPPING_DATA } from "../ActionTypes/ActionType";
 const initialstate = {
   CountriesData : [],
   PaymentGatewayData : [],
   ShippingApiData : [],
+  
   loading : true
 }
 
 const CheckOutDataReducer = (state = initialstate, action) => {
   
-  
+  console.log("updatedshippingdata===>",state.ShippingApiData);
       switch (action.type) {
         case GET_COUNTRIES:
           return {
@@ -24,11 +25,33 @@ const CheckOutDataReducer = (state = initialstate, action) => {
 
           }
           case GET_SHIPPING_METHOD:
+           
             return{
               ...state,
               ShippingApiData:action.payload
 
             }
+            case  SELECTED_SHIPPING_DATA :
+              console.log("selectedshippingdata======>",action.payload);
+                state.ShippingApiData.map(item =>{
+                if(item.title == action.payload.title) 
+                  {  
+                 
+                    item.active= true
+
+
+                  }
+                  else{
+                    item.active = false
+                  }
+                
+                // if(item.title === 'Free shipping')
+                //    return {...item, active: 'false'}
+            })
+            return {
+              ...state,
+            }
+            
         default:
           return state;
       }

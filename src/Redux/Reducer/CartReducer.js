@@ -8,7 +8,8 @@ const init = {
 }
 
 const CartReducer = (state = init, action) => {
-  
+  // console.log("itemtotal=====>",state.itemTotal);
+  console.log("carttotal======>",state.cartTotal);
   switch (action.type) {
     case ADD_TO_CART:
 
@@ -83,22 +84,21 @@ const CartReducer = (state = init, action) => {
       let newState = state;
       let itemIndex = newState.carts.findIndex(item => item.id === data.id)
       newState.carts[itemIndex].quantity = data.qty
-      // newState.cartTotal =  parseInt(newState?.cartTotal) + parseInt(newState.carts[itemIndex]?.price)
-      // console.log("statecarttotal",newState.cartTotal);
-      // console.log("quntity",newState.carts[itemIndex].quantity);
-      // console.log("price==",newState.carts[itemIndex].price );
-      // let cartstotal = state.carts.map((item, index) => {
-      //   return 
-      // } )
+      
       console.log("checking", newState.carts);
+      console.log("itemtotal=>",newState.itemTotal);
       
       let Totals = 0
       newState.carts.forEach(item => {
         Totals += parseInt(item.quantity) * parseInt(item.price)
       })
+       let itemtotals = 0
+      newState.carts.forEach(data => {
+        itemtotals += parseInt(data.quantity)
+      })
       console.log("totals",Totals);
       newState.cartTotal = Totals
-      // newState.itemTotal =   data.qty
+      newState.itemTotal = itemtotals
       return {
         
         ...newState 

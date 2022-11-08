@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Container, Row, Col } from "react-bootstrap";
 import BillingForm from './BillingForm'
 import { CheckFormData } from '../../Redux/Action/GetCheckFormData'
-import { PaymentGateway, ShippingMethod } from '../../Redux/Action/GetCheOutPageApi'
+import { PaymentGateway,SelectedShipppingData } from '../../Redux/Action/GetCheOutPageApi'
 import Accordion from 'react-bootstrap/Accordion';
 import './CheckOutPage.css'
 
@@ -15,13 +15,16 @@ const CheckOutPage = () => {
     console.log("checkoutformdata========>", checkoutformdata.firstName);
     const paymentdata = useSelector((state) => state?.CheckOutDataReducer?.PaymentGatewayData)
     const ShippingData = useSelector((state) => state?.CheckOutDataReducer?.ShippingApiData)
-    console.log("ShippingData=======>", ShippingData);
+    console.log("ShippingDataupdated=======>", ShippingData);
 
     console.log("paymentdataapi=========>", paymentdata);
     const [test, setTest] = useState(null)
+
+    console.log("test======>",test);
     console.log("cartdata======>", cartdata.carts);
     const [validation, setvalidation] = useState(false)
     const [shipping, setShipping] = useState(null)
+    console.log("shippingvalue ==========>",shipping);
     const [shippininput, setShippingInput] = useState(null)
     console.log("shippinginputvalue====>", shippininput);
 
@@ -30,17 +33,18 @@ const CheckOutPage = () => {
 
 
 
-
     const handleSubmit = (values) => {
-        console.log("values======>", values);
         setvalidation(true)
         window.scroll(0, 0)
         if (values.firstName && values.lastName && values.Streetaddress && values.city && values.pincode && values.phone && values.email) {
             setvalidation(false)
         }
+        
+        console.log("values======>", values);
         dispatch(CheckFormData({
             val: values,
-            data1: ordercartdata
+            data1: ordercartdata,
+            paymentdata : test
         }))
 
     }
@@ -52,17 +56,22 @@ const CheckOutPage = () => {
         const getshippingmethod = ShippingData.find((item) => item.title === e.target.value)
         if (getshippingmethod) {
         setShippingInput(getshippingmethod)
+        dispatch(SelectedShipppingData(getshippingmethod))
+        
         }
-
-
     }   
+
+    const handlePaymentGateway = (e) => {
+        setTest(e.target.value)
+        let selectedpaymentdata = paymentdata.find((data) => data.title === e.target.value )
+        console.log("selectedpaymentdata=========>",selectedpaymentdata);
+        setTest(selectedpaymentdata)
+
+    }
     useEffect(() => {
         dispatch(PaymentGateway())
     }, [])
-    useEffect(() => {
-        dispatch(ShippingMethod())
-    }, [])
-
+   
 
 
     return (
@@ -118,9 +127,9 @@ const CheckOutPage = () => {
                             {shipping ? <BillingForm prefix="Shipping_" onSubmit={handleSubmit} excludes={["phone", "email", "notes"]} /> : null}
                         </div>
                     </Col>
-                    <Col className="mt-5 g-4" md={5}>
+                    <Col className="mt-5 g-3" md={5}>
                         <h3>Your Order</h3>
-                        <div className="orderHeading mt-4">
+                        <div className="orderHeading  mt-4">
                             <Row>
                                 <Col md={7} >
 
@@ -193,7 +202,7 @@ const CheckOutPage = () => {
                                 <div className="displaydata">
 
                                     <p>
-                                        {"-"}${applycouponsdData1.amount}
+                                        -${applycouponsdData1.amount}
                                     </p>
 
 
@@ -205,28 +214,29 @@ const CheckOutPage = () => {
                             : ""}
                         {/* shipping data */}
                         <Row>
-                            <Col>
+                            <Col md={7}>
                                 <div className="displaydata">
 
                                     <p>Shipping</p>
 
                                 </div>
                             </Col>
-                            <Col>
+                            <Col md={5}>
 
                                 <div className="shippingdata">
-                                    {ShippingData.map((data) => (
+                                    {ShippingData.map((item) => (
 
                                         <label>
                                             <input
                                                 onChange={(e) => handleChange(e)}
                                                 id="radio1"
-                                                name="radiobutton"
+                                                name="radiobutton1"
                                                 type="radio"
-                                                value={data.title}
+                                                checked={item?.active == true ? true : null}
+                                                value={item.title}
                                             />
 
-                                            <span>{data.title} {data?.settings?.cost ? <span> ${data?.settings?.cost?.value}.00</span> : null}</span>
+                                            <span>{item.title} {item?.settings?.cost ? <span> ${item?.settings?.cost?.value}.00</span> : null}</span>
                                             {/* {data.title === "Same day delivery"? <span>${data?.settings?.cost?.value}.00</span> : ''}  */}
 
 
@@ -254,13 +264,13 @@ const CheckOutPage = () => {
                             <Col md={5}>
                                 {applycouponsdData1 ?
                                     <div className="displaydata">
-                                        <b>
+                                
                                             <p>
 
-                                                {shippininput?.settings?.cost ? <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount) + parseInt(shippininput?.settings?.cost?.value)}.00</div> : <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount)}.00</div>}
+                                                { shippininput?.settings?.cost ? <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount) + parseInt(shippininput?.settings?.cost?.value)}.00</div> : <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount)}.00</div>}
 
                                             </p>
-                                        </b>
+                              
 
                                     </div> :
                                     <div className="displaydata">
@@ -286,11 +296,12 @@ const CheckOutPage = () => {
                                                     {/* <Accordion.Header>  */}
                                                     <label>
                                                         <input
-                                                            onChange={(e) => setTest(e.target.value)}
+                                                            onChange={(e) => handlePaymentGateway(e)}
                                                             id="radio1"
-                                                            name="radiobutton"
+                                                            name="radiobutton2"
                                                             type="radio"
                                                             value={data.title}
+                                                           
                                                         />
 
                                                         <span >{data.title} </span>
@@ -299,7 +310,7 @@ const CheckOutPage = () => {
                                                     {/* </Accordion.Header> */}
                                                 </div>
                                                 {/* <Accordion.Body> */}
-                                                {test === data.title ?
+                                                {  test?.title === data.title ?
                                                     <div className="displaydata">
                                                         <h6>{data.description}</h6>
                                                     </div>

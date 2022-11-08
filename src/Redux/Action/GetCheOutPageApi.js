@@ -1,4 +1,4 @@
-import {GET_COUNTRIES,PAYMENT_GATEWAY,GET_SHIPPING_METHOD } from '../ActionTypes/ActionType'
+import {GET_COUNTRIES,PAYMENT_GATEWAY,GET_SHIPPING_METHOD, SELECTED_SHIPPING_DATA  } from '../ActionTypes/ActionType'
 import api from '../Api';
 
 
@@ -37,5 +37,11 @@ export const ShippingMethod  = () => async dispatch => {
     dispatch ({
         type :GET_SHIPPING_METHOD,
         payload : GetshippingData.data
+    })
+}
+export const  SelectedShipppingData = (data) => async dispatch => {
+    dispatch ({
+        type :  SELECTED_SHIPPING_DATA ,
+        payload : data
     })
 }

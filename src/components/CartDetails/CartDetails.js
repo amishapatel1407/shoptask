@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useNavigate } from "react-router-dom";
 import './CartDetails.css'
 import { GetCoupons, ApplyCouponsData } from '../../Redux/Action/GetCoupons'
+import {ShippingMethod,SelectedShipppingData } from '../../Redux/Action/GetCheOutPageApi'
 import { useEffect } from "react";
 function CartDetails() {
 
@@ -22,16 +23,26 @@ function CartDetails() {
     const applycouponsdData1 = useSelector((state) => state?.CouponsReducer?.AppluCouponsData)
     // const [resdata, setResponsedata] = useState(null)
     const [shippininput, setShippingInput] = useState(ShippingData)
+
+
+    console.log("shippininputradiobutton ========>",shippininput );
     const [coupons, setCoupons] = useState(null)
     const dispatch = useDispatch();
     const navigate = useNavigate()
-console.log("shippininput==>",shippininput);
+
+
+
     const handlecartpageinput = (e, cartIndex) => {
         console.log("asdasd", e.target.value, cartIndex);
         dispatch(updateCartQty({
             id: cartIndex,
             qty: e.target.value
         }))
+    }
+
+
+    const updatecart = () => {
+        console.log("update");
     }
     const handleclickShop = () => {
         navigate('/shop')
@@ -107,19 +118,25 @@ console.log("shippininput==>",shippininput);
         dispatch(GetCoupons())
 
     }, [])
-// for shipping data//
+    useEffect(() => {
+        dispatch(ShippingMethod())
+    }, [])
+
+    // for shipping data//
     const handleChange = (e) => {
 
         setShippingInput(e.target.value)
-        const getshippingmethod = ShippingData.find((item) => item.title === e.target.value)
-        if (getshippingmethod) {
-
-            setShippingInput(getshippingmethod)
-        }
+       
+            const selectedShipping = ShippingData.find((item) => item.title === e.target.value)
+            if (selectedShipping) {
+                 
+                setShippingInput(selectedShipping)
+                dispatch(SelectedShipppingData(selectedShipping))
+            }
     }
-// ----------------//
+    // ----------------//
     const inputTyp = (e) => {
-        setInput(e.target.value)
+        setInput(e.target.value)    
     }
 
     const ApplyCoupons = () => {
@@ -310,23 +327,37 @@ console.log("shippininput==>",shippininput);
 
                 </Container>
             ))}
-            {cartDetails.itemTotal !== 0 ? <Container>
+            {cartDetails.itemTotal !== 0 ?
+             <Container>
+
+                <Row>
+                    <Col md={9}>
+
+                        <div>
+                            {
+                                coupons ?
+                                    <>
+                                        <input type="text" value={coupons.code} className="coupaninput" name="coupon" placeholder="Enter coupan a code" />  <button type="button" className="applycoupan" onClick={() => remove()}> remove</button>
+                                    </> :
+                                    <>
+                                        <input type="text" className="coupaninput" value={input} onChange={(e) => inputTyp(e)} name="coupon" placeholder="Enter coupan a code" />
+
+                                        <button type="button" className="applycoupan" onClick={() => ApplyCoupons()}> Apply Coupan</button>
+                                    </>
+                            }
 
 
-                <div>
-                    {
-                        coupons ?
-                            <>
-                                <input type="text" value={coupons.code} className="coupaninput" name="coupon" placeholder="Enter coupan a code" />  <button type="button" className="applycoupan" onClick={() => remove()}> remove</button>
-                            </> :
-                            <>
-                                <input type="text" className="coupaninput" value={input} onChange={(e) => inputTyp(e)} name="coupon" placeholder="Enter coupan a code" />
+                        </div>
+                    </Col>
+                    <Col md={3}>
+                    <div>
+                        <button className="updatebtn" onClick={() => updatecart()}>
+                            update cart
+                        </button>
+                    </div>
+                    </Col>
+                </Row>
 
-                                <button type="button" className="applycoupan" onClick={() => ApplyCoupons()}> Apply Coupan</button>
-                            </>
-                    }
-
-                </div>
 
                 <div className="disaplytotal  ">
                     <Row >
@@ -341,10 +372,10 @@ console.log("shippininput==>",shippininput);
                         </Col>
                         <Col className="g-3">
                             <h5>${Cartsubtotal}.00</h5> </Col>
-                    </Row>  
+                    </Row>
+                        {applycouponsdData1   ?
                     <Row className=' bg-light'>
-                        {applycouponsdData1 ?
-                            <div className="d-flex justify-content-around " >
+                            <div className="d-flex justify-content-around  " >
                                 <Col md={6} className='g-3'>
                                     <h5>Coupon:{applycouponsdData1.code}
                                     </h5>
@@ -365,9 +396,9 @@ console.log("shippininput==>",shippininput);
                             </div>
 
 
+                    </Row>
                             :
                             ""}
-                    </Row>
                     <Row className=' bg-light'>
                         <Col className="g-3">
                             <div>
@@ -388,12 +419,14 @@ console.log("shippininput==>",shippininput);
                                                 id="radio1"
                                                 name="radiobutton"
                                                 type="radio"
-                                                // checked={shippininput ? shippininput.title :null}
+                                             checked={data.active === true ? true : null}
                                                 value={data.title}
+                                            //    checked={   ShippingData.active === true ?   ShippingData.title :null                                                }
+                                                
                                             />
 
                                             <span>{data.title} {data?.settings?.cost ? <span> ${data?.settings?.cost?.value}.00</span> : null}</span>
-                                  
+
 
 
                                         </label>
@@ -407,28 +440,28 @@ console.log("shippininput==>",shippininput);
                         </Col>
                     </Row>
                     <Row className=' bg-light'>
- 
-                        {applycouponsdData1 ?
+
+                        {applycouponsdData1?
                             <>
 
                                 <Col className="g-3" md={6}>
                                     <h5>Total: </h5>
                                 </Col>
                                 <Col className="g-3">
-                               
-                                    {shippininput?.settings?.cost ? <h4>${parseInt(Cartsubtotal - applycouponsdData1.amount) + parseInt(shippininput?.settings?.cost?.value)}.00</h4> : <h4>${parseInt(Cartsubtotal - applycouponsdData1.amount)}.00</h4>}
+
+                                    {shippininput?.settings?.cost ? <h5>${parseInt(Cartsubtotal - applycouponsdData1.amount) + parseInt(shippininput?.settings?.cost?.value)}.00</h5> : <h5>${parseInt(Cartsubtotal - applycouponsdData1.amount)}.00</h5>}
                                 </Col>
 
                             </>
 
-                            :
+                            :   
                             <>
                                 <Col className="g-3">
                                     <h5>Total:</h5>
 
                                 </Col>
                                 <Col className="g-3">
-                              
+
                                     {shippininput?.settings?.cost ? <h4>${parseInt(Cartsubtotal) + parseInt(shippininput?.settings?.cost?.value)}.00</h4> : <h4>${(Cartsubtotal)}.00</h4>}
 
                                 </Col>
