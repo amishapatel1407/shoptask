@@ -12,12 +12,12 @@ const CheckOutPage = () => {
     const cartdata = useSelector((state) => state?.cartuser)
     const applycouponsdData1 = useSelector((state) => state?.CouponsReducer?.AppluCouponsData)
     const checkoutformdata = useSelector((state) => state?.CheckOutFormData)
-    console.log("checkoutformdata========>", checkoutformdata.firstName);
     const paymentdata = useSelector((state) => state?.CheckOutDataReducer?.PaymentGatewayData)
     const ShippingData = useSelector((state) => state?.CheckOutDataReducer?.ShippingApiData)
-    console.log("ShippingDataupdated=======>", ShippingData);
-
-    console.log("paymentdataapi=========>", paymentdata);
+    const selectedshippingdata1 = useSelector((state) => state?.CheckOutDataReducer?.SelectedShippingData)
+ console.log("selectedshippingdataoncheckoutpage----------------> ",selectedshippingdata1);
+ const AllCheckoutData = useSelector((state) => state?.CheckOutFormData )
+ console.log("AllCheckoutData===========>",AllCheckoutData);
     const [test, setTest] = useState(null)
 
     console.log("test======>",test);
@@ -25,13 +25,30 @@ const CheckOutPage = () => {
     const [validation, setvalidation] = useState(false)
     const [shipping, setShipping] = useState(null)
     console.log("shippingvalue ==========>",shipping);
-    const [shippininput, setShippingInput] = useState(null)
+    const [shippininput, setShippingInput] = useState(selectedshippingdata1)
     console.log("shippinginputvalue====>", shippininput);
 
     let ordercartdata = cartdata.carts
 
 
+    const ShippinghandleChange = (e) => {
 
+        // setShippingInput(e.target.checked)
+        const getshippingmethod = ShippingData.find((item) => item.title === e.target.value)
+        
+        setShippingInput(getshippingmethod)
+        dispatch(SelectedShipppingData(getshippingmethod))
+        
+        
+        
+    } 
+    const handlePaymentGateway = (e) => {
+        setTest(e.target.value)
+        let selectedpaymentdata = paymentdata.find((data) => data.title === e.target.value )
+        console.log("selectedpaymentdata=========>",selectedpaymentdata);
+        setTest(selectedpaymentdata)
+
+    }
 
     const handleSubmit = (values) => {
         setvalidation(true)
@@ -44,30 +61,16 @@ const CheckOutPage = () => {
         dispatch(CheckFormData({
             val: values,
             data1: ordercartdata,
-            paymentdata : test
+            paymentdata : test,
+            shippingdata :shippininput
         }))
 
     }
 
 
-    const handleChange = (e) => {
+   
 
-        setShippingInput(e.target.value)
-        const getshippingmethod = ShippingData.find((item) => item.title === e.target.value)
-        if (getshippingmethod) {
-        setShippingInput(getshippingmethod)
-        dispatch(SelectedShipppingData(getshippingmethod))
-        
-        }
-    }   
-
-    const handlePaymentGateway = (e) => {
-        setTest(e.target.value)
-        let selectedpaymentdata = paymentdata.find((data) => data.title === e.target.value )
-        console.log("selectedpaymentdata=========>",selectedpaymentdata);
-        setTest(selectedpaymentdata)
-
-    }
+ 
     useEffect(() => {
         dispatch(PaymentGateway())
     }, [])
@@ -184,7 +187,7 @@ const CheckOutPage = () => {
 
                             </Col>
                         </Row>
-                                {applycouponsdData1  ?
+                                {applycouponsdData1 && applycouponsdData1?.code?.length > 0  ?
                         <Row>
                            
                            <Col md={7}>
@@ -224,15 +227,16 @@ const CheckOutPage = () => {
                             <Col md={5}>
 
                                 <div className="shippingdata">
-                                    {ShippingData.map((item) => (
+                                    {ShippingData.map((item,id) => (
 
                                         <label>
                                             <input
-                                                onChange={(e) => handleChange(e)}
+                                                onChange={(e) => ShippinghandleChange(e)}
                                                 id="radio1"
                                                 name="radiobutton1"
                                                 type="radio"
-                                                checked={item?.active == true ? true : null}
+                                              
+                                                checked={selectedshippingdata1 &&  item?.title== selectedshippingdata1.title ? true :null}
                                                 value={item.title}
                                             />
 
@@ -262,12 +266,12 @@ const CheckOutPage = () => {
                                 </div>
                             </Col>
                             <Col md={5}>
-                                {applycouponsdData1 ?
+                                {applycouponsdData1 && applycouponsdData1?.code?.length > 0 ?
                                     <div className="displaydata">
                                 
                                             <p>
 
-                                                { shippininput?.settings?.cost ? <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount) + parseInt(shippininput?.settings?.cost?.value)}.00</div> : <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount)}.00</div>}
+                                                { shippininput && shippininput?.settings?.cost? <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount) + parseInt(shippininput?.settings?.cost?.value)}.00</div> : <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount)}.00</div>}
 
                                             </p>
                               
@@ -276,7 +280,8 @@ const CheckOutPage = () => {
                                     <div className="displaydata">
                                         <b>
                                             <p>
-                                                ${cartdata.cartTotal}.00
+                                            {shippininput?.settings?.cost ? <div>${parseInt(cartdata.cartTotal) + parseInt(shippininput?.settings?.cost?.value)}.00</div> : <div>${(cartdata.cartTotal)}.00</div>}
+                                                {/* ${cartdata.cartTotal}.00 */}
                                             </p>
                                         </b>
 

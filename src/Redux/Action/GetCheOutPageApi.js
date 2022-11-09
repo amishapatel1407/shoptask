@@ -25,7 +25,7 @@ export const PaymentGateway  = () => async dispatch => {
     const PaymentGateway = await api.get('/payment_gateways')
     dispatch( {
         type: PAYMENT_GATEWAY ,
-        payload:PaymentGateway.data
+        payload:PaymentGateway.data,
        
     })
 

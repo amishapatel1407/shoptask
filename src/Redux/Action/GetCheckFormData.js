@@ -6,7 +6,7 @@ import {GET_CHECKOUTFORM_DATA } from '../ActionTypes/ActionType'
 
 export const CheckFormData  = (data) => async dispatch => {
 
- 
+ console.log("done",data);
         // const getCountries = await api.get('/data/countries')
         dispatch( {
             type:GET_CHECKOUTFORM_DATA ,

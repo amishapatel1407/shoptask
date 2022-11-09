@@ -3,12 +3,13 @@ const initialstate = {
   CountriesData : [],
   PaymentGatewayData : [],
   ShippingApiData : [],
+  SelectedShippingData : null,
   
   loading : true
 }
 
 const CheckOutDataReducer = (state = initialstate, action) => {
-  
+  console.log("amisha======>",state.SelectedShippingData);
   console.log("updatedshippingdata===>",state.ShippingApiData);
       switch (action.type) {
         case GET_COUNTRIES:
@@ -33,23 +34,24 @@ const CheckOutDataReducer = (state = initialstate, action) => {
             }
             case  SELECTED_SHIPPING_DATA :
               console.log("selectedshippingdata======>",action.payload);
-                state.ShippingApiData.map(item =>{
-                if(item.title == action.payload.title) 
-                  {  
+             
+            //     state.ShippingApiData.map(item =>{
+            //     if(item.title == action.payload.title) 
+            //       {  
                  
-                    item.active= true
+            //         item.active= true
 
 
-                  }
-                  else{
-                    item.active = false
-                  }
+            //       }
+            //       else{
+            //         item.active = false
+            //       }
                 
-                // if(item.title === 'Free shipping')
-                //    return {...item, active: 'false'}
-            })
+                
+            // })
             return {
               ...state,
+              SelectedShippingData : action.payload
             }
             
         default:

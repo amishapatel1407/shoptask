@@ -1,12 +1,13 @@
 import React, { useState } from "react";
+import './CartDetails.css'
 import { Col, Row, Card, Button, Container } from "react-bootstrap";
 import { FaTrash, FaArrowRight } from 'react-icons/fa'
 import { deleteItem, updateCartQty } from '../../Redux/Action/CartAction'
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useNavigate } from "react-router-dom";
-import './CartDetails.css'
 import { GetCoupons, ApplyCouponsData } from '../../Redux/Action/GetCoupons'
 import {ShippingMethod,SelectedShipppingData } from '../../Redux/Action/GetCheOutPageApi'
+import BillingForm from '../CheckoutPage/BillingForm'
 import { useEffect } from "react";
 function CartDetails() {
 
@@ -21,11 +22,13 @@ function CartDetails() {
     const GetCouponsdata = useSelector((state) => state?.CouponsReducer)
     const ShippingData = useSelector((state) => state?.CheckOutDataReducer?.ShippingApiData)
     const applycouponsdData1 = useSelector((state) => state?.CouponsReducer?.AppluCouponsData)
+    const selectedshippingdata1 = useSelector((state) => state?.CheckOutDataReducer?.SelectedShippingData)
     // const [resdata, setResponsedata] = useState(null)
-    const [shippininput, setShippingInput] = useState(ShippingData)
+    const [shippininput, setShippingInput] = useState(selectedshippingdata1)
+    const FinalShippingData = useSelector((state) => state?.CheckOutFormData?.shipping  )
+    console.log("FinalShippingData============================================>",FinalShippingData);
 
 
-    console.log("shippininputradiobutton ========>",shippininput );
     const [coupons, setCoupons] = useState(null)
     const dispatch = useDispatch();
     const navigate = useNavigate()
@@ -41,7 +44,7 @@ function CartDetails() {
     }
 
 
-    const updatecart = () => {
+    const updatecart = () => { 
         console.log("update");
     }
     const handleclickShop = () => {
@@ -132,7 +135,7 @@ function CartDetails() {
                  
                 setShippingInput(selectedShipping)
                 dispatch(SelectedShipppingData(selectedShipping))
-            }
+                    }
     }
     // ----------------//
     const inputTyp = (e) => {
@@ -360,27 +363,26 @@ function CartDetails() {
 
 
                 <div className="disaplytotal  ">
-                    <Row >
-                        <Col>
+                        
                             <h4 className="mb-3">Carts Totals : </h4>
-                        </Col>
+                      
 
-                    </Row>
-                    <Row className=' bg-light'>
-                        <Col md={6} className='g-3 bg-light'>
-                            <h5>SubTotal :</h5>
+                   <div >
+                   <Row className=' bg-light'>
+                        <Col md={4} className='g-3 bg-light'>
+                            <h5>SubTotal:</h5>
                         </Col>
                         <Col className="g-3">
                             <h5>${Cartsubtotal}.00</h5> </Col>
                     </Row>
-                        {applycouponsdData1   ?
-                    <Row className=' bg-light'>
-                            <div className="d-flex justify-content-around  " >
-                                <Col md={6} className='g-3'>
+                        {applycouponsdData1 && applycouponsdData1?.code?.length > 0 ?
+                    <Row className=' bg-light couponsdata'>
+                            <div className="d-flex justify-content-around  coupunsdata " >
+                                <Col md={4} className=''>
                                     <h5>Coupon:{applycouponsdData1.code}
                                     </h5>
                                 </Col>
-                                <Col md={2} className='g-3'>
+                                <Col md={2} className=''>
                                     <h5>
                                         -${applycouponsdData1.amount}
 
@@ -400,16 +402,16 @@ function CartDetails() {
                             :
                             ""}
                     <Row className=' bg-light'>
-                        <Col className="g-3">
+                        <Col md={4} className="g-3">
                             <div>
 
                                 <h5>Shipping</h5>
 
                             </div>
                         </Col>
-                        <Col className="g-3" >
+                        <Col md={6} className="g-3" >
 
-                            {ShippingData.map((data) => (
+                            {ShippingData.map((data,id) => (
                                 <div className="dispalyshipping ">
 
                                     <h5>
@@ -419,10 +421,9 @@ function CartDetails() {
                                                 id="radio1"
                                                 name="radiobutton"
                                                 type="radio"
-                                             checked={data.active === true ? true : null}
+                                                checked={selectedshippingdata1 &&  data.id === selectedshippingdata1.id ? true :null}
                                                 value={data.title}
-                                            //    checked={   ShippingData.active === true ?   ShippingData.title :null                                                }
-                                                
+                                          
                                             />
 
                                             <span>{data.title} {data?.settings?.cost ? <span> ${data?.settings?.cost?.value}.00</span> : null}</span>
@@ -435,34 +436,54 @@ function CartDetails() {
 
                                 </div>
                             ))}
+                       <div className="mt-4">
+                       {
+                                FinalShippingData.Shipping_Streetaddress.length > 0  ? 
+                                <div className="dispalyshipping">
+                                <h5>  Shipping to: <b>{FinalShippingData?.Shipping_Streetaddress},    {FinalShippingData?.Shipping_city},{FinalShippingData?.Shipping_state},
+                                {FinalShippingData?.Shipping_Country}</b></h5>
+                              </div> 
+                              : null
+                            }
+                       </div>
+                       <div className="changeaddresslink">
+                        <form>
+                            <a href="" > changeaddress</a>
+                            <BillingForm prefix = {''} excludes={''}/>
+                        </form>
+                       </div>
+                           
 
 
                         </Col>
                     </Row>
                     <Row className=' bg-light'>
 
-                        {applycouponsdData1?
+                        {applycouponsdData1 && applycouponsdData1?.code?.length > 0?
                             <>
 
-                                <Col className="g-3" md={6}>
+                                <Col className="g-3" md={4}>
                                     <h5>Total: </h5>
                                 </Col>
                                 <Col className="g-3">
 
-                                    {shippininput?.settings?.cost ? <h5>${parseInt(Cartsubtotal - applycouponsdData1.amount) + parseInt(shippininput?.settings?.cost?.value)}.00</h5> : <h5>${parseInt(Cartsubtotal - applycouponsdData1.amount)}.00</h5>}
+                                    {
+                                    shippininput?.settings?.cost ? 
+                                    <h5>${parseInt(Cartsubtotal - applycouponsdData1.amount) + parseInt(shippininput?.settings?.cost?.value)}.00</h5> : <h5>${parseInt(Cartsubtotal - applycouponsdData1.amount)}.00</h5> 
+                                    }
                                 </Col>
 
                             </>
 
                             :   
                             <>
-                                <Col className="g-3">
+                                <Col className="g-3" md={4}>
                                     <h5>Total:</h5>
 
                                 </Col>
                                 <Col className="g-3">
 
-                                    {shippininput?.settings?.cost ? <h4>${parseInt(Cartsubtotal) + parseInt(shippininput?.settings?.cost?.value)}.00</h4> : <h4>${(Cartsubtotal)}.00</h4>}
+                                    {shippininput?.settings?.cost ? <h5>${parseInt(Cartsubtotal) + parseInt(shippininput?.settings?.cost?.value)}.00</h5> : <h5>${(Cartsubtotal)}.00</h5>}
 
                                 </Col>
                             </>
@@ -470,6 +491,7 @@ function CartDetails() {
 
                         }
                     </Row>
+                   </div>
                     <button className="checkoutbtn" onClick={navigatetocheckoutpage}>Proceed to checkout <FaArrowRight /></button>
 
 

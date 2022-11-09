@@ -75,10 +75,12 @@ a.removelink {
     height: auto;
     font-size: 20px;
 }
+/* carttotal css */
 .disaplytotal{
     margin-left: 500px;
     margin-top: 20px;
-    width: 400px;
+    width: auto;
+    width: 515px;
 }
 .disaplytotal .checkoutbtn{
     font-size: 20px;
@@ -100,3 +102,13 @@ a.removelink {
     margin-left: 20px;
 }
 
+
+.coupunsdata{
+    padding-left: 8px !important;
+}
+.disaplytotal h5{
+    color: rgb(95, 88, 88);
+    font-size: 18px;
+}
+.changeaddresslink a{
+font-size: 18px;}
