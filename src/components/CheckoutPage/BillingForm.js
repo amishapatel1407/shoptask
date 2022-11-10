@@ -37,21 +37,26 @@ function BillingForm(props) {
       <form className="form" onSubmit={handleSubmit} >
         <Row>
           <Col md={6}>
-            <div className="control">
-              <label>First Name</label>
-              <abbr className="required" title="required">*</abbr>
-              <div >
-                <Field
-                  name={`${prefix}firstName`}
-                  component="input"
-                  type="text"
-                  placeholder="First Name"
-                />
-              </div>
-            </div>
+            {!excludes.includes('firstName') ? 
+             <div className="control">
+             <label>First Name</label>
+             <abbr className="required" title="required">*</abbr>
+             <div >
+               <Field
+                 name={`${prefix}firstName`}
+                 component="input"
+                 type="text"
+                 placeholder="First Name"
+               />
+             </div>
+           </div> : ''
+            }
+           
           </Col>
 
           <Col md={6}>
+            {!excludes.includes('lastName') ? 
+
             <div className="control">
               <label>Last Name</label>
               <abbr className="required" title="required">*</abbr>
@@ -64,7 +69,10 @@ function BillingForm(props) {
                 />
               </div>
             </div>
+
+            : ''}
           </Col>
+          {!excludes.includes('companyname') ? 
           <div className="control">
             <label>Company Name(optional)</label>
             <div>
@@ -75,7 +83,9 @@ function BillingForm(props) {
                 placeholder="Company Name"
               />
             </div>
-          </div>
+          </div> : ''
+          
+          }
           <div className="control">
             <label>Country / Region</label>
             <abbr className="required" title="required">*</abbr>
@@ -100,8 +110,10 @@ function BillingForm(props) {
           </div>
 
 
+       {!excludes.includes('Streetaddress') ? 
+       
 
-          <div className="control">
+       <div className="control">
             <label>Street address </label>
             <abbr className="required" title="required">*</abbr>
             <div>
@@ -112,7 +124,9 @@ function BillingForm(props) {
                 placeholder="Street address"
               />
             </div>
-          </div>
+          </div> : ''
+      }
+          
           <div className="control">
             <label>Town / City</label>
             <abbr className="required" title="required">*</abbr>
@@ -154,7 +168,7 @@ function BillingForm(props) {
                 name={`${prefix}pincode`}
                 component="input"
                 type="text"
-                placeholder="Pin Code"
+                placeholder="pin  code"
               />
             </div>
           </div>

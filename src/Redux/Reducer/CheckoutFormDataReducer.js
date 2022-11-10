@@ -1,4 +1,4 @@
-import { GET_CHECKOUTFORM_DATA } from '../ActionTypes/ActionType'
+import { GET_CHECKOUTFORM_DATA,GET_SHIPPING_METHOD,SELECTED_SHIPPING_DATA,PAYMENT_GATEWAY } from '../ActionTypes/ActionType'
 const init = {
   payment_method: "",
   payment_method_title: "",
@@ -29,23 +29,17 @@ const init = {
   shipping_lines: [
     
   ]
+  
 }
 
 
 const CheckoutFormDataReducer = (state = init, action) => {
-  // console.log("shippingdata========>",state.shipping);
-  console.log("state  =========>",state);
-  // console.log("payment_method====>",state.payment_method);
-  // console.log("payment_method_title======>",state.payment_method_title);
-  // console.log("state------=========>",state);
+  
   switch (action.type) {
     
     case GET_CHECKOUTFORM_DATA:
-      // console.log("formactionpayload=====>", action.payload.val);
-      // console.log('paymentdata =========>', action.payload.paymentdata);
-      // console.log("finalshippingdata========>",action.payload.shippingdata);
+    
       const valuesdata = action.payload.val
-      // console.log('firstname===========>',valuesdata);
       let billingData = {
         firstName: valuesdata.firstName,
         lastName: valuesdata.lastName,
@@ -84,7 +78,7 @@ const CheckoutFormDataReducer = (state = init, action) => {
       //------------------------//
       state.shipping_lines = [] 
       const shippingmethodata = action.payload.shippingdata
-      // console.log("shippingmethodata.method_id========>",shippingmethodata.method_id);
+      console.log("shippingmethodata.method_id========>",shippingmethodata.method_id);
       let shipping_line = {
         method_id : shippingmethodata.method_id,
         method_title : shippingmethodata.method_title
@@ -96,12 +90,29 @@ const CheckoutFormDataReducer = (state = init, action) => {
         ...state,
         billing: billingData,
         shipping: shippingData,
-        // payment_method: action.payload.paymentdata.id,
-        // payment_method_title: action.payload.paymentdata.title
+        payment_method: action.payload.paymentdata.id,
+        payment_method_title: action.payload.paymentdata.title
 
 
       }
-    default:
+      case GET_SHIPPING_METHOD :
+        let shipping_line_data = {
+          method_id: action.payload[0].method_id,
+          method_title : action.payload[0].method_title,
+        }
+        return{
+          shipping_lines : shipping_line_data
+        }
+         case  SELECTED_SHIPPING_DATA :
+              console.log("selectedshippingdataonreducer======>",action.payload);
+            
+           
+            return {
+              ...state,
+              shipping_lines : action.payload
+            }
+           
+    default: 
       return state
   }
 }

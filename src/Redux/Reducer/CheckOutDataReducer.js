@@ -3,11 +3,12 @@ const initialstate = {
   CountriesData : [],
   PaymentGatewayData : [],
   ShippingApiData : [],
+  shipping_loader : true,
   SelectedShippingData : null,
   
   loading : true
 }
-
+console.log('mailstate========>',initialstate.ShippingApiLoading);
 const CheckOutDataReducer = (state = initialstate, action) => {
   console.log("amisha======>",state.SelectedShippingData);
   console.log("updatedshippingdata===>",state.ShippingApiData);
@@ -29,30 +30,18 @@ const CheckOutDataReducer = (state = initialstate, action) => {
            
             return{
               ...state,
-              ShippingApiData:action.payload
+              ShippingApiData:action.payload,
+              shipping_loader : false
 
             }
-            case  SELECTED_SHIPPING_DATA :
-              console.log("selectedshippingdata======>",action.payload);
+            // case  SELECTED_SHIPPING_DATA :
+            //   console.log("selectedshippingdata======>",action.payload);
              
-            //     state.ShippingApiData.map(item =>{
-            //     if(item.title == action.payload.title) 
-            //       {  
-                 
-            //         item.active= true
-
-
-            //       }
-            //       else{
-            //         item.active = false
-            //       }
-                
-                
-            // })
-            return {
-              ...state,
-              SelectedShippingData : action.payload
-            }
+           
+            // return {
+            //   ...state,
+            //   SelectedShippingData : action.payload
+            // }
             
         default:
           return state;

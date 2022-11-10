@@ -1,4 +1,4 @@
-import {GET_CHECKOUTFORM_DATA } from '../ActionTypes/ActionType'
+import {GET_CHECKOUTFORM_DATA,SELECTED_SHIPPING_DATA } from '../ActionTypes/ActionType'
 // import api from '../Api';
 
 
@@ -6,7 +6,6 @@ import {GET_CHECKOUTFORM_DATA } from '../ActionTypes/ActionType'
 
 export const CheckFormData  = (data) => async dispatch => {
 
- console.log("done",data);
         // const getCountries = await api.get('/data/countries')
         dispatch( {
             type:GET_CHECKOUTFORM_DATA ,
@@ -16,4 +15,11 @@ export const CheckFormData  = (data) => async dispatch => {
     
  
 
+}
+export const  SelectedShipppingData = (data) => async (dispatch) => {
+    console.log("SelectedShipppingData==========<",data);
+    dispatch ({
+        type :  SELECTED_SHIPPING_DATA ,
+        payload : data
+    })
 }

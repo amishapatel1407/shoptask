@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Container, Row, Col } from "react-bootstrap";
 import BillingForm from './BillingForm'
 import { CheckFormData } from '../../Redux/Action/GetCheckFormData'
-import { PaymentGateway,SelectedShipppingData } from '../../Redux/Action/GetCheOutPageApi'
+import { PaymentGateway } from '../../Redux/Action/GetCheOutPageApi'
+import { SelectedShipppingData } from '../../Redux/Action/GetCheckFormData'
 import Accordion from 'react-bootstrap/Accordion';
 import './CheckOutPage.css'
 
@@ -14,19 +15,15 @@ const CheckOutPage = () => {
     const checkoutformdata = useSelector((state) => state?.CheckOutFormData)
     const paymentdata = useSelector((state) => state?.CheckOutDataReducer?.PaymentGatewayData)
     const ShippingData = useSelector((state) => state?.CheckOutDataReducer?.ShippingApiData)
-    const selectedshippingdata1 = useSelector((state) => state?.CheckOutDataReducer?.SelectedShippingData)
- console.log("selectedshippingdataoncheckoutpage----------------> ",selectedshippingdata1);
- const AllCheckoutData = useSelector((state) => state?.CheckOutFormData )
- console.log("AllCheckoutData===========>",AllCheckoutData);
+    const AllCheckoutData = useSelector((state) => state?.CheckOutFormData)
+    console.log("AllCheckoutData=========>",AllCheckoutData);
+    const payment_method = useSelector((state) => state?.CheckOutFormData?.payment_method)
+    console.log("payment_method==========>",payment_method);
+    const shipping_linesData = useSelector((state) => state?.CheckOutFormData?.shipping_lines)
     const [test, setTest] = useState(null)
-
-    console.log("test======>",test);
-    console.log("cartdata======>", cartdata.carts);
     const [validation, setvalidation] = useState(false)
     const [shipping, setShipping] = useState(null)
-    console.log("shippingvalue ==========>",shipping);
-    const [shippininput, setShippingInput] = useState(selectedshippingdata1)
-    console.log("shippinginputvalue====>", shippininput);
+    const [shippininput, setShippingInput] = useState(shipping_linesData)
 
     let ordercartdata = cartdata.carts
 
@@ -34,19 +31,19 @@ const CheckOutPage = () => {
     const ShippinghandleChange = (e) => {
 
         // setShippingInput(e.target.checked)
-        const getshippingmethod = ShippingData.find((item) => item.title === e.target.value)
-        
-        setShippingInput(getshippingmethod)
+        const getshippingmethod = ShippingData.find((item) => item.method_id === e.target.value)
+       setShippingInput(getshippingmethod)
         dispatch(SelectedShipppingData(getshippingmethod))
-        
-        
-        
-    } 
+
+
+
+    }
     const handlePaymentGateway = (e) => {
         setTest(e.target.value)
-        let selectedpaymentdata = paymentdata.find((data) => data.title === e.target.value )
-        console.log("selectedpaymentdata=========>",selectedpaymentdata);
+        let selectedpaymentdata = paymentdata.find((data) => data.id === e.target.value)
+        console.log("selectedpaymentdata=========>", selectedpaymentdata);
         setTest(selectedpaymentdata)
+        dispatch(PaymentGateway(selectedpaymentdata))
 
     }
 
@@ -56,25 +53,25 @@ const CheckOutPage = () => {
         if (values.firstName && values.lastName && values.Streetaddress && values.city && values.pincode && values.phone && values.email) {
             setvalidation(false)
         }
-        
+
         console.log("values======>", values);
         dispatch(CheckFormData({
             val: values,
             data1: ordercartdata,
-            paymentdata : test,
-            shippingdata :shippininput
+            paymentdata: test,
+            shippingdata: shippininput
         }))
 
     }
 
 
-   
 
- 
+
+
     useEffect(() => {
         dispatch(PaymentGateway())
     }, [])
-   
+
 
 
     return (
@@ -187,10 +184,10 @@ const CheckOutPage = () => {
 
                             </Col>
                         </Row>
-                                {applycouponsdData1 && applycouponsdData1?.code?.length > 0  ?
-                        <Row>
-                           
-                           <Col md={7}>
+                        {applycouponsdData1 && applycouponsdData1?.code?.length > 0 ?
+                            <Row>
+
+                                <Col md={7}>
                                     <div className="displaydata">
 
                                         <p>
@@ -198,22 +195,22 @@ const CheckOutPage = () => {
                                         </p>
 
 
-                                    </div> 
-                            </Col>
-                            <Col md={5}>
+                                    </div>
+                                </Col>
+                                <Col md={5}>
 
-                                <div className="displaydata">
+                                    <div className="displaydata">
 
-                                    <p>
-                                        -${applycouponsdData1.amount}
-                                    </p>
+                                        <p>
+                                            -${applycouponsdData1.amount}
+                                        </p>
 
 
-                                </div>
+                                    </div>
 
-                            </Col>
-                            
-                        </Row>
+                                </Col>
+
+                            </Row>
                             : ""}
                         {/* shipping data */}
                         <Row>
@@ -227,7 +224,7 @@ const CheckOutPage = () => {
                             <Col md={5}>
 
                                 <div className="shippingdata">
-                                    {ShippingData.map((item,id) => (
+                                    {ShippingData.map((item, id) => (
 
                                         <label>
                                             <input
@@ -235,9 +232,9 @@ const CheckOutPage = () => {
                                                 id="radio1"
                                                 name="radiobutton1"
                                                 type="radio"
-                                              
-                                                checked={selectedshippingdata1 &&  item?.title== selectedshippingdata1.title ? true :null}
-                                                value={item.title}
+
+                                                checked={shipping_linesData ? item.method_id === shipping_linesData?.method_id ? shipping_linesData.method_id : null : id === 0}
+                                                value={item.method_id}
                                             />
 
                                             <span>{item.title} {item?.settings?.cost ? <span> ${item?.settings?.cost?.value}.00</span> : null}</span>
@@ -268,19 +265,19 @@ const CheckOutPage = () => {
                             <Col md={5}>
                                 {applycouponsdData1 && applycouponsdData1?.code?.length > 0 ?
                                     <div className="displaydata">
-                                
-                                            <p>
 
-                                                { shippininput && shippininput?.settings?.cost? <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount) + parseInt(shippininput?.settings?.cost?.value)}.00</div> : <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount)}.00</div>}
+                                        <p>
 
-                                            </p>
-                              
+                                            {shippininput && shippininput?.settings?.cost ? <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount) + parseInt(shippininput?.settings?.cost?.value)}.00</div> : <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount)}.00</div>}
+
+                                        </p>
+
 
                                     </div> :
                                     <div className="displaydata">
                                         <b>
                                             <p>
-                                            {shippininput?.settings?.cost ? <div>${parseInt(cartdata.cartTotal) + parseInt(shippininput?.settings?.cost?.value)}.00</div> : <div>${(cartdata.cartTotal)}.00</div>}
+                                                {shippininput?.settings?.cost ? <div>${parseInt(cartdata.cartTotal) + parseInt(shippininput?.settings?.cost?.value)}.00</div> : <div>${(cartdata.cartTotal)}.00</div>}
                                                 {/* ${cartdata.cartTotal}.00 */}
                                             </p>
                                         </b>
@@ -305,8 +302,9 @@ const CheckOutPage = () => {
                                                             id="radio1"
                                                             name="radiobutton2"
                                                             type="radio"
-                                                            value={data.title}
-                                                           
+                                                            checked={ payment_method === data.id ? true : null }
+                                                            value={data.id}
+
                                                         />
 
                                                         <span >{data.title} </span>
@@ -315,7 +313,7 @@ const CheckOutPage = () => {
                                                     {/* </Accordion.Header> */}
                                                 </div>
                                                 {/* <Accordion.Body> */}
-                                                {  test?.title === data.title ?
+                                                {test?.title === data.title ?
                                                     <div className="displaydata">
                                                         <h6>{data.description}</h6>
                                                     </div>

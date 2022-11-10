@@ -39,9 +39,9 @@ export const ShippingMethod  = () => async dispatch => {
         payload : GetshippingData.data
     })
 }
-export const  SelectedShipppingData = (data) => async dispatch => {
-    dispatch ({
-        type :  SELECTED_SHIPPING_DATA ,
-        payload : data
-    })
-}
+// export const  SelectedShipppingData = (data) => async dispatch => {
+//     dispatch ({
+//         type :  SELECTED_SHIPPING_DATA ,
+//         payload : data
+//     })
+// }
