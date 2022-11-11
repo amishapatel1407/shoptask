@@ -4,9 +4,7 @@ const initialstate = {
   PaymentGatewayData : [],
   ShippingApiData : [],
   shipping_loader : true,
-  SelectedShippingData : null,
-  
-  loading : true
+ 
 }
 console.log('mailstate========>',initialstate.ShippingApiLoading);
 const CheckOutDataReducer = (state = initialstate, action) => {

@@ -5,9 +5,9 @@ import { FaTrash, FaArrowRight } from 'react-icons/fa'
 import { deleteItem, updateCartQty } from '../../Redux/Action/CartAction'
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useNavigate } from "react-router-dom";
-import { GetCoupons, ApplyCouponsData } from '../../Redux/Action/GetCoupons'
+import { GetCoupons } from '../../Redux/Action/GetCoupons'
 import { ShippingMethod } from '../../Redux/Action/GetCheOutPageApi'
-import { SelectedShipppingData } from '../../Redux/Action/GetCheckFormData'
+import { SelectedShipppingData,ApplyCouponsData } from '../../Redux/Action/GetCheckFormData'
 import BillingForm from '../CheckoutPage/BillingForm'
 import { useEffect } from "react";
 import LoadingSpinner from "../LoadingSpinner";
@@ -23,7 +23,8 @@ function CartDetails() {
     const [deleteitem, setdeleteItem] = useState(null)
     const GetCouponsdata = useSelector((state) => state?.CouponsReducer)
     const ShippingData = useSelector((state) => state?.CheckOutDataReducer?.ShippingApiData)
-    const applycouponsdData1 = useSelector((state) => state?.CouponsReducer?.AppluCouponsData)
+    const applycouponsdData1 = useSelector((state) => state?.CheckOutFormData?.coupon_lines)
+    console.log("applycouponsdData1==========>",applycouponsdData1);
     const shipping_loader = useSelector((state) => state?.CheckOutDataReducer?.shipping_loader)
     console.log("shipping_loader---->", shipping_loader);
     // const selectedshippingdata1 = useSelector((state) => state?.CheckOutDataReducer?.SelectedShippingData)
@@ -31,14 +32,14 @@ function CartDetails() {
     const [changeAdressLink, setChangeAdressLink] = useState(false)
 
     // console.log("changeAdressLink=========>",changeAdressLink)
-    // const FinalShippingData = useSelector((state) => state?.CheckOutFormData?.shipping )
-    // console.log("FinalShippingData============================================>",FinalShippingData);
+    const FinalShippingData = useSelector((state) => state?.CheckOutFormData?.shipping)
+    console.log("FinalShippingData============================================>", FinalShippingData);
     const shipping_linesData = useSelector((state) => state?.CheckOutFormData?.shipping_lines)
-    console.log("shipping_linesData=========>", shipping_linesData);
+    // console.log("shipping_linesData.total=========>", shipping_linesData.total);
 
     const [shippininput, setShippingInput] = useState(shipping_linesData)
 
-    const [coupons, setCoupons] = useState(null)
+    const [coupons, setCoupons] = useState()
     const dispatch = useDispatch();
     const navigate = useNavigate()
 
@@ -98,7 +99,7 @@ function CartDetails() {
 
         setCoupons('')
         if (myRe123) {
-        let coupons_existing_variable = false
+            let coupons_existing_variable = false
             if (myRe123.product_ids.length > 0) {
                 console.log("updateresult map", updateresult);
                 myRe123.product_ids.map((pid) => {
@@ -110,14 +111,14 @@ function CartDetails() {
                     }
                     else {
                         setCoupons(null)
-                  
+
 
                     }
 
                 })
-                if(!coupons_existing_variable){
-                        dispatch(ApplyCouponsData())
-                        setAlert("does not Applicable")
+                if (!coupons_existing_variable) {
+                    dispatch(ApplyCouponsData())
+                    setAlert("does not Applicable")
 
                 }
             }
@@ -126,8 +127,8 @@ function CartDetails() {
             }
 
         }
-       
-       
+
+
     }
 
 
@@ -147,10 +148,7 @@ function CartDetails() {
         setShippingInput(e.target.value)
 
         const selectedShipping = ShippingData.find((item) => item.method_id === e.target.value)
-        console.log("selectedShipping------------------------------------------->", selectedShipping);
 
-
-        setShippingInput(selectedShipping)
         dispatch(SelectedShipppingData(selectedShipping))
 
     }
@@ -399,7 +397,7 @@ function CartDetails() {
                                                     </Col>
                                                     <Col md={2} className=''>
                                                         <h5>
-                                                            -${applycouponsdData1.amount}
+                                                            -${applycouponsdData1.discount}
 
                                                         </h5>
                                                     </Col>
@@ -436,7 +434,7 @@ function CartDetails() {
                                                                     id="radio1"
                                                                     name="radiobutton"
                                                                     type="radio"
-                                                                    checked={shipping_linesData ? data.method_id == shipping_linesData?.method_id ? shipping_linesData.method_id : null : id === 0}
+                                                                    checked={shipping_linesData?.method_id ? data.method_id == shipping_linesData?.method_id ? shipping_linesData.method_id : null : null}
                                                                     value={data.method_id}
 
                                                                 />
@@ -451,16 +449,16 @@ function CartDetails() {
 
                                                     </div>
                                                 ))}
-                                                <div className="mt-4">
-                                                    {/* {
-                                FinalShippingData?.Shipping_Streetaddress?.length > 0  ? 
-                                <div className="dispalyshipping">
-                                <h5>  Shipping to: <b>{FinalShippingData?.Shipping_Streetaddress},    {FinalShippingData?.Shipping_city},{FinalShippingData?.Shipping_state},
-                                {FinalShippingData?.Shipping_Country}</b></h5>
-                              </div> 
-                              : null
-                            } */}
-                                                </div>
+                                                {/* <div className="mt-4">
+                                                    {
+                                                        FinalShippingData?.Shipping_Streetaddress?.length > 0 ?
+                                                            <div className="dispalyshipping">
+                                                                <h5>  Shipping to: <b>{FinalShippingData?.Shipping_Streetaddress},    {FinalShippingData?.Shipping_city},{FinalShippingData?.Shipping_state},
+                                                                    {FinalShippingData?.Shipping_Country}</b></h5>
+                                                            </div>
+                                                            : null
+                                                    }
+                                                </div> */}
                                                 <div className="changeaddresslink">
 
                                                     <NavLink href="" onClick={(e) => handlechnegeaddresslink(e)}> changeaddress</NavLink>
@@ -482,10 +480,9 @@ function CartDetails() {
                                                         <h5>Total: </h5>
                                                     </Col>
                                                     <Col className="g-3">
-
                                                         {
-                                                            shippininput?.settings?.cost ?
-                                                                <h5>${parseInt(Cartsubtotal - applycouponsdData1.amount) + parseInt(shippininput?.settings?.cost?.value)}.00</h5> : <h5>${parseInt(Cartsubtotal - applycouponsdData1.amount)}.00</h5>
+                                                            shipping_linesData && shipping_linesData?.total ?
+                                                                <h5>${parseInt(Cartsubtotal - applycouponsdData1.discount) + parseInt(shipping_linesData?.total)}.00</h5> : <h5>${parseInt(Cartsubtotal - applycouponsdData1.discount)}.00</h5>
                                                         }
                                                     </Col>
 
@@ -499,7 +496,8 @@ function CartDetails() {
                                                     </Col>
                                                     <Col className="g-3">
 
-                                                        {shippininput?.settings?.cost ? <h5>${parseInt(Cartsubtotal) + parseInt(shippininput?.settings?.cost?.value)}.00</h5> : <h5>${(Cartsubtotal)}.00</h5>}
+                                                        {shipping_linesData && shipping_linesData?.total ?
+                                                            <h5>${parseInt(Cartsubtotal) + parseInt(shipping_linesData?.total)}.00</h5> : <h5>${(Cartsubtotal)}.00</h5>}
 
                                                     </Col>
                                                 </>

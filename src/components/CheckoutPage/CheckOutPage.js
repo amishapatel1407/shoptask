@@ -4,14 +4,15 @@ import { Container, Row, Col } from "react-bootstrap";
 import BillingForm from './BillingForm'
 import { CheckFormData } from '../../Redux/Action/GetCheckFormData'
 import { PaymentGateway } from '../../Redux/Action/GetCheOutPageApi'
-import { SelectedShipppingData } from '../../Redux/Action/GetCheckFormData'
+import { SelectedShipppingData,SelectedPaymentData,ApplyCouponsData } from '../../Redux/Action/GetCheckFormData'
 import Accordion from 'react-bootstrap/Accordion';
 import './CheckOutPage.css'
 
 const CheckOutPage = () => {
     const dispatch = useDispatch()
     const cartdata = useSelector((state) => state?.cartuser)
-    const applycouponsdData1 = useSelector((state) => state?.CouponsReducer?.AppluCouponsData)
+    const applycouponsdData1 = useSelector((state) => state?.CheckOutFormData?.coupon_lines)
+    console.log("applycouponsdData1==========>",applycouponsdData1);
     const checkoutformdata = useSelector((state) => state?.CheckOutFormData)
     const paymentdata = useSelector((state) => state?.CheckOutDataReducer?.PaymentGatewayData)
     const ShippingData = useSelector((state) => state?.CheckOutDataReducer?.ShippingApiData)
@@ -20,30 +21,27 @@ const CheckOutPage = () => {
     const payment_method = useSelector((state) => state?.CheckOutFormData?.payment_method)
     console.log("payment_method==========>",payment_method);
     const shipping_linesData = useSelector((state) => state?.CheckOutFormData?.shipping_lines)
-    const [test, setTest] = useState(null)
+
     const [validation, setvalidation] = useState(false)
     const [shipping, setShipping] = useState(null)
     const [shippininput, setShippingInput] = useState(shipping_linesData)
 
     let ordercartdata = cartdata.carts
 
-
+    console.log("shipping_linesData?.total",shipping_linesData?.total)
     const ShippinghandleChange = (e) => {
 
-        // setShippingInput(e.target.checked)
         const getshippingmethod = ShippingData.find((item) => item.method_id === e.target.value)
-       setShippingInput(getshippingmethod)
+ 
         dispatch(SelectedShipppingData(getshippingmethod))
 
 
 
     }
     const handlePaymentGateway = (e) => {
-        setTest(e.target.value)
         let selectedpaymentdata = paymentdata.find((data) => data.id === e.target.value)
-        console.log("selectedpaymentdata=========>", selectedpaymentdata);
-        setTest(selectedpaymentdata)
-        dispatch(PaymentGateway(selectedpaymentdata))
+    
+        dispatch(SelectedPaymentData(selectedpaymentdata))
 
     }
 
@@ -55,11 +53,13 @@ const CheckOutPage = () => {
         }
 
         console.log("values======>", values);
+        console.log('shippininputtest',shippininput);
         dispatch(CheckFormData({
             val: values,
             data1: ordercartdata,
-            paymentdata: test,
-            shippingdata: shippininput
+            coupons :applycouponsdData1
+            // paymentdata: test,
+            // shippingdata: shippininput
         }))
 
     }
@@ -85,18 +85,18 @@ const CheckOutPage = () => {
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
                         <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
                     </svg>
-                    {!checkoutformdata.billing.firstName ? <div> Billing FirstName is a required field.</div> : null}
-                    {!checkoutformdata.billing.lastName ? <div> Billing LastName is a required field.</div> : null}
-                    {!checkoutformdata.billing.Streetaddress ? <div> Billing Street Address is a required field.</div> : null}
-                    {!checkoutformdata.billing.city ? <div> Billing City is a required field.</div> : null}
-                    {!checkoutformdata.billing.pincode ? <div> Billing Pincode is a required field.</div> : null}
-                    {!checkoutformdata.billing.phone ? <div> Billing Phone Number is a required field.</div> : null}
-                    {!checkoutformdata.billing.email ? <div> Billing Email is a required field.</div> : null}
-                    {!checkoutformdata.shipping.Shipping_firstName ? <div> shipping firstName is a required field.</div> : null}
-                    {!checkoutformdata.shipping.Shipping_lastName ? <div> shipping LastName  is a required field.</div> : null}
-                    {!checkoutformdata.shipping.Shipping_Streetaddress ? <div> shipping Streetaddress  is a required field.</div> : null}
-                    {!checkoutformdata.shipping.Shipping_city ? <div> shipping City  is a required field.</div> : null}
-                    {!checkoutformdata.shipping.Shipping_pincode ? <div> shipping Pincode  is a required field.</div> : null}
+                    {!checkoutformdata?.billing?.firstName ? <div> Billing FirstName is a required field.</div> : null}
+                    {!checkoutformdata?.billing?.lastName ? <div> Billing LastName is a required field.</div> : null}
+                    {!checkoutformdata?.billing?.Streetaddress ? <div> Billing Street Address is a required field.</div> : null}
+                    {!checkoutformdata?.billing?.city ? <div> Billing City is a required field.</div> : null}
+                    {!checkoutformdata?.billing?.pincode ? <div> Billing Pincode is a required field.</div> : null}
+                    {!checkoutformdata?.billing?.phone ? <div> Billing Phone Number is a required field.</div> : null}
+                    {!checkoutformdata?.billing?.email ? <div> Billing Email is a required field.</div> : null}
+                    {!checkoutformdata?.shipping?.Shipping_firstName ? <div> shipping firstName is a required field.</div> : null}
+                    {!checkoutformdata?.shipping?.Shipping_lastName ? <div> shipping LastName  is a required field.</div> : null}
+                    {!checkoutformdata?.shipping?.Shipping_Streetaddress ? <div> shipping Streetaddress  is a required field.</div> : null}
+                    {!checkoutformdata?.shipping?.Shipping_city ? <div> shipping City  is a required field.</div> : null}
+                    {!checkoutformdata?.shipping?.Shipping_pincode ? <div> shipping Pincode  is a required field.</div> : null}
 
 
 
@@ -202,7 +202,7 @@ const CheckOutPage = () => {
                                     <div className="displaydata">
 
                                         <p>
-                                            -${applycouponsdData1.amount}
+                                            -${applycouponsdData1.discount}
                                         </p>
 
 
@@ -224,21 +224,21 @@ const CheckOutPage = () => {
                             <Col md={5}>
 
                                 <div className="shippingdata">
-                                    {ShippingData.map((item, id) => (
+                                    {ShippingData.map((item) => (
 
                                         <label>
                                             <input
                                                 onChange={(e) => ShippinghandleChange(e)}
                                                 id="radio1"
-                                                name="radiobutton1"
+                                                name="radiobuttonshipping"
                                                 type="radio"
 
-                                                checked={shipping_linesData ? item.method_id === shipping_linesData?.method_id ? shipping_linesData.method_id : null : id === 0}
+                                                checked={shipping_linesData?.method_id ? item.method_id === shipping_linesData?.method_id ? shipping_linesData.method_id : null : null}
                                                 value={item.method_id}
                                             />
 
                                             <span>{item.title} {item?.settings?.cost ? <span> ${item?.settings?.cost?.value}.00</span> : null}</span>
-                                            {/* {data.title === "Same day delivery"? <span>${data?.settings?.cost?.value}.00</span> : ''}  */}
+                                   
 
 
                                         </label>
@@ -268,7 +268,9 @@ const CheckOutPage = () => {
 
                                         <p>
 
-                                            {shippininput && shippininput?.settings?.cost ? <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount) + parseInt(shippininput?.settings?.cost?.value)}.00</div> : <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount)}.00</div>}
+                                            {shipping_linesData && shipping_linesData?.total ? 
+                                            <div>${parseInt(cartdata.cartTotal - applycouponsdData1.discount) + parseInt(shipping_linesData?.total)}.00</div> : <div>${parseInt(cartdata.cartTotal - applycouponsdData1.discount)}.00</div>
+                                            }
 
                                         </p>
 
@@ -277,8 +279,8 @@ const CheckOutPage = () => {
                                     <div className="displaydata">
                                         <b>
                                             <p>
-                                                {shippininput?.settings?.cost ? <div>${parseInt(cartdata.cartTotal) + parseInt(shippininput?.settings?.cost?.value)}.00</div> : <div>${(cartdata.cartTotal)}.00</div>}
-                                                {/* ${cartdata.cartTotal}.00 */}
+                                                {shipping_linesData && shipping_linesData?.total ? 
+                                                 <div>${parseInt(cartdata.cartTotal) + parseInt(shipping_linesData?.total)}.00</div> : <div>${(cartdata.cartTotal)}.00</div>}
                                             </p>
                                         </b>
 
@@ -300,9 +302,9 @@ const CheckOutPage = () => {
                                                         <input
                                                             onChange={(e) => handlePaymentGateway(e)}
                                                             id="radio1"
-                                                            name="radiobutton2"
+                                                            name="radiobuttonpayment"
                                                             type="radio"
-                                                            checked={ payment_method === data.id ? true : null }
+                                                            checked={payment_method === data.id ? data.id : null }
                                                             value={data.id}
 
                                                         />
@@ -313,7 +315,7 @@ const CheckOutPage = () => {
                                                     {/* </Accordion.Header> */}
                                                 </div>
                                                 {/* <Accordion.Body> */}
-                                                {test?.title === data.title ?
+                                                {data.id === payment_method ?
                                                     <div className="displaydata">
                                                         <h6>{data.description}</h6>
                                                     </div>
