@@ -12,7 +12,7 @@ function BillingForm(props) {
   const dispatch = useDispatch()
   const CountriesData = useSelector((state) => state?.CheckOutDataReducer?.CountriesData)
 
-  const [selectedCountry, setSelectedCountry] = useState();
+  const [selectedCountry, setSelectedCountry] = useState(null);
   
 
 
@@ -30,20 +30,19 @@ function BillingForm(props) {
 
 
 
-
   return (
     <div>
 
       <form className="form" onSubmit={handleSubmit} >
         <Row>
           <Col md={6}>
-            {!excludes.includes('firstName') ? 
+            {!excludes.includes('first_name') ? 
              <div className="control">
              <label>First Name</label>
              <abbr className="required" title="required">*</abbr>
              <div >
                <Field
-                 name={`${prefix}firstName`}
+                 name={`${prefix}first_name`}
                  component="input"
                  type="text"
                  placeholder="First Name"
@@ -55,14 +54,14 @@ function BillingForm(props) {
           </Col>
 
           <Col md={6}>
-            {!excludes.includes('lastName') ? 
+            {!excludes.includes('last_name') ? 
 
             <div className="control">
               <label>Last Name</label>
               <abbr className="required" title="required">*</abbr>
               <div>
                 <Field
-                  name={`${prefix}lastName`}
+                  name={`${prefix}last_name`}
                   component="input"
                   type="text"
                   placeholder="Last Name"
@@ -93,14 +92,14 @@ function BillingForm(props) {
 
 
               <Field
-                name={`${prefix}Country`}
+                name={`${prefix}country`}
                 component="select"
                 value={selectedCountry}
                 onChange={(e) => setSelectedCountry(e.target.value)}
               >
-                <option>Select Your Country</option>
                 {CountriesData.map((country, id) => (
                   <>
+                 
                     <option key={id} value={country.name}>{country.name}</option></>
                 ))}
 
@@ -110,7 +109,7 @@ function BillingForm(props) {
           </div>
 
 
-       {!excludes.includes('Streetaddress') ? 
+       {!excludes.includes('address_1') ? 
        
 
        <div className="control">
@@ -118,7 +117,7 @@ function BillingForm(props) {
             <abbr className="required" title="required">*</abbr>
             <div>
               <Field
-                name={`${prefix}Streetaddress`}
+                name={`${prefix}address_1`}
                 component="input"
                 type="text"
                 placeholder="Street address"
@@ -150,7 +149,7 @@ function BillingForm(props) {
                 value={availableState}
 
               >
-                <option>Select Your state</option>
+                {/* <option>Select Your state</option> */}
                 {availableState?.states?.map((state, id) => (
 
                   <option key={id} value={state.name}>{state.name}</option>
@@ -165,7 +164,7 @@ function BillingForm(props) {
 
             <div>
               <Field
-                name={`${prefix}pincode`}
+                name={`${prefix}postcode`}
                 component="input"
                 type="text"
                 placeholder="pin  code"

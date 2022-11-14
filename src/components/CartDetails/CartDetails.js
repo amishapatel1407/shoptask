@@ -7,7 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useNavigate } from "react-router-dom";
 import { GetCoupons } from '../../Redux/Action/GetCoupons'
 import { ShippingMethod } from '../../Redux/Action/GetCheOutPageApi'
-import { SelectedShipppingData,ApplyCouponsData } from '../../Redux/Action/GetCheckFormData'
+import { SelectedShipppingData } from '../../Redux/Action/GetCheckFormData'
+import {ApplyCouponsData} from '../../Redux/Action/GetCoupons'
 import BillingForm from '../CheckoutPage/BillingForm'
 import { useEffect } from "react";
 import LoadingSpinner from "../LoadingSpinner";
@@ -23,7 +24,7 @@ function CartDetails() {
     const [deleteitem, setdeleteItem] = useState(null)
     const GetCouponsdata = useSelector((state) => state?.CouponsReducer)
     const ShippingData = useSelector((state) => state?.CheckOutDataReducer?.ShippingApiData)
-    const applycouponsdData1 = useSelector((state) => state?.CheckOutFormData?.coupon_lines)
+    const applycouponsdData1 = useSelector((state) => state?.CouponsReducer?.AppluCouponsData)
     console.log("applycouponsdData1==========>",applycouponsdData1);
     const shipping_loader = useSelector((state) => state?.CheckOutDataReducer?.shipping_loader)
     console.log("shipping_loader---->", shipping_loader);
@@ -35,14 +36,24 @@ function CartDetails() {
     const FinalShippingData = useSelector((state) => state?.CheckOutFormData?.shipping)
     console.log("FinalShippingData============================================>", FinalShippingData);
     const shipping_linesData = useSelector((state) => state?.CheckOutFormData?.shipping_lines)
-    // console.log("shipping_linesData.total=========>", shipping_linesData.total);
+    console.log("shipping_linesData.total=========>",shipping_linesData); 
+
 
     const [shippininput, setShippingInput] = useState(shipping_linesData)
+    console.log("shippininput=====>",shippininput);
 
     const [coupons, setCoupons] = useState()
     const dispatch = useDispatch();
     const navigate = useNavigate()
 
+
+//     let totals = [
+//         shipping_linesData.map((data) => {
+//             totals += data.total
+//         })
+
+//     ]
+//    console.log("totals=======>?",totals);
 
 
     const handleclickShop = () => {
@@ -145,9 +156,8 @@ function CartDetails() {
     // for shipping data//
     const handleChange = (e) => {
 
-        setShippingInput(e.target.value)
 
-        const selectedShipping = ShippingData.find((item) => item.method_id === e.target.value)
+        const selectedShipping = ShippingData.find((item) => item.method_id ===  e.target.value)
 
         dispatch(SelectedShipppingData(selectedShipping))
 
@@ -397,7 +407,7 @@ function CartDetails() {
                                                     </Col>
                                                     <Col md={2} className=''>
                                                         <h5>
-                                                            -${applycouponsdData1.discount}
+                                                            -${applycouponsdData1.amount}
 
                                                         </h5>
                                                     </Col>
@@ -482,7 +492,7 @@ function CartDetails() {
                                                     <Col className="g-3">
                                                         {
                                                             shipping_linesData && shipping_linesData?.total ?
-                                                                <h5>${parseInt(Cartsubtotal - applycouponsdData1.discount) + parseInt(shipping_linesData?.total)}.00</h5> : <h5>${parseInt(Cartsubtotal - applycouponsdData1.discount)}.00</h5>
+                                                                <h5>${parseInt(Cartsubtotal - applycouponsdData1.amount) + parseInt(shipping_linesData[0]?.total)}.00</h5> : <h5>${parseInt(Cartsubtotal - applycouponsdData1.amount)}.00</h5>
                                                         }
                                                     </Col>
 
