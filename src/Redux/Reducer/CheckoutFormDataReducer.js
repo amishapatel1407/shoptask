@@ -9,8 +9,7 @@ const init = {
   billing: {
     first_name: "",
     last_name: "",
-    address_1: "",
-
+    address_1: "",  
     city: "",
     state: "",
     postcode: "",
@@ -27,18 +26,19 @@ const init = {
     country: "",
     state: "",
   },
-
+orderRecivedData : []
 
 }
 
 
 const CheckoutFormDataReducer = (state = init, action) => {
-  console.log("coupon_lines------->", state.coupon_lines);
+  console.log("orderRecivedData------->", state.orderRecivedData);
   switch (action.type) {
 
     case POST_API_DATA:
       return  {
-        ...action.payload
+        ...state,  
+        orderRecivedData : action.payload
       }
 
     case GET_CHECKOUTFORM_DATA:
@@ -82,12 +82,12 @@ const CheckoutFormDataReducer = (state = init, action) => {
       }
       state.coupon_lines.push(FinalApplycouponsData)
 
-      // console.log("finalshippingdata======>",action.payload.shippingdata);
+      // console.log("finalshippingdata======>",action.payload?.shippingdata);
       // state.shipping_lines = []
       // let finalShippinData = {
       //   method_id : action.payload?.shippingdata?.method_id,
       //   method_title : action.payload?.shippingdata?.method_title,
-      //   total : action.payload?.shippingdata?.settings?.cost?.value || 0
+      //   total : String(action.payload?.shippingdata?.total)
       // }
       // state.shipping_lines.push(finalShippinData)
 
@@ -100,15 +100,15 @@ const CheckoutFormDataReducer = (state = init, action) => {
 
       }
     case GET_SHIPPING_METHOD:
-      state.shipping_lines = []
+      state.shipping_lines = []  
       let shipping_line_data = {
         method_id: action.payload[0].method_id,
         method_title: action.payload[0].method_title,
-        total: parseInt(action.payload[0]?.settings?.cost?.value) || 0
+        total: action.payload[0]?.settings?.cost?.value || "0"
       }
       state.shipping_lines.push(shipping_line_data)
       return {
-        // shipping_lines: shipping_line_data
+        ...state
       }
     case SELECTED_SHIPPING_DATA:
       console.log("action.payload?.settings?.cost?.value",state.shipping_lines);
@@ -117,7 +117,7 @@ const CheckoutFormDataReducer = (state = init, action) => {
       let shipping_line_Selected_data = {
         method_id: action.payload?.method_id,
         method_title: action.payload?.method_title,
-        total:  action.payload?.settings?.cost?.value || 0 ,
+        total: action.payload?.settings?.cost?.value || "0" ,
       }
       state.shipping_lines.push(shipping_line_Selected_data)
 

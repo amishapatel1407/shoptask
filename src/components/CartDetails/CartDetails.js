@@ -28,32 +28,26 @@ function CartDetails() {
     console.log("applycouponsdData1==========>",applycouponsdData1);
     const shipping_loader = useSelector((state) => state?.CheckOutDataReducer?.shipping_loader)
     console.log("shipping_loader---->", shipping_loader);
-    // const selectedshippingdata1 = useSelector((state) => state?.CheckOutDataReducer?.SelectedShippingData)
-    // const [resdata, setResponsedata] = useState(null)
+
     const [changeAdressLink, setChangeAdressLink] = useState(false)
 
-    // console.log("changeAdressLink=========>",changeAdressLink)
     const FinalShippingData = useSelector((state) => state?.CheckOutFormData?.shipping)
     console.log("FinalShippingData============================================>", FinalShippingData);
     const shipping_linesData = useSelector((state) => state?.CheckOutFormData?.shipping_lines)
     console.log("shipping_linesData.total=========>",shipping_linesData); 
 
 
-    const [shippininput, setShippingInput] = useState(shipping_linesData)
-    console.log("shippininput=====>",shippininput);
+    const shippingCost = shipping_linesData?.map((data) => data.total)
+    const [shippininput, setShippingInput] = useState()
 
     const [coupons, setCoupons] = useState()
     const dispatch = useDispatch();
     const navigate = useNavigate()
 
 
-//     let totals = [
-//         shipping_linesData.map((data) => {
-//             totals += data.total
-//         })
 
-//     ]
-//    console.log("totals=======>?",totals);
+
+
 
 
     const handleclickShop = () => {
@@ -239,6 +233,16 @@ function CartDetails() {
         <div className="cartdetailespage">
             <Container>
                 <h2 className="pt-4">Cart</h2>
+                {/* {shipping_linesData?.map((data) => (
+                   
+                    <div>
+                        {data.total || 0} 
+                    </div>
+
+                    
+                
+                ))} */}
+               
                 {shipping_loader ? <LoadingSpinner /> :
                     <div>
 
@@ -444,7 +448,9 @@ function CartDetails() {
                                                                     id="radio1"
                                                                     name="radiobutton"
                                                                     type="radio"
-                                                                    checked={shipping_linesData?.method_id ? data.method_id == shipping_linesData?.method_id ? shipping_linesData.method_id : null : null}
+                                                                    checked={ shipping_linesData ? shipping_linesData?.find((item) => item.method_id ===  data.method_id)  ? data.method_id : null  : id == 0 }
+                                                                    // checked = {shipping_linesData?.map((item) => item.method_id === data.method_id  ? true  : null )}
+                                                                    // checked={shipping_linesData?.method_id ? data.method_id == shipping_linesData?.method_id ? shipping_linesData.method_id : null : id == 0}
                                                                     value={data.method_id}
 
                                                                 />
@@ -490,9 +496,10 @@ function CartDetails() {
                                                         <h5>Total: </h5>
                                                     </Col>
                                                     <Col className="g-3">
+                                                        
                                                         {
-                                                            shipping_linesData && shipping_linesData?.total ?
-                                                                <h5>${parseInt(Cartsubtotal - applycouponsdData1.amount) + parseInt(shipping_linesData[0]?.total)}.00</h5> : <h5>${parseInt(Cartsubtotal - applycouponsdData1.amount)}.00</h5>
+                                                              shipping_linesData && shippingCost ?
+                                                                <h5>${parseInt(Cartsubtotal - applycouponsdData1.amount) + parseInt(shippingCost)}.00</h5> : <h5>${parseInt(Cartsubtotal - applycouponsdData1.amount)}.00</h5>
                                                         }
                                                     </Col>
 
@@ -506,8 +513,9 @@ function CartDetails() {
                                                     </Col>
                                                     <Col className="g-3">
 
-                                                        {shipping_linesData && shipping_linesData?.total ?
-                                                            <h5>${parseInt(Cartsubtotal) + parseInt(shipping_linesData?.total)}.00</h5> : <h5>${(Cartsubtotal)}.00</h5>}
+                                                        {
+                                                         shipping_linesData && shippingCost ? 
+                                                            <h5>${parseInt(Cartsubtotal) + parseInt(shippingCost)}.00</h5> : <h5>${(Cartsubtotal)}.00</h5>}
 
                                                     </Col>
                                                 </>

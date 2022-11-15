@@ -8,9 +8,11 @@ import { SelectedShipppingData,SelectedPaymentData} from '../../Redux/Action/Get
 import {ApplyCouponsData} from '../../Redux/Action/GetCoupons'
 import {PostApiData} from '../../Redux/Action/PostData'
 import Accordion from 'react-bootstrap/Accordion';
+import { useNavigate } from "react-router-dom";
 import './CheckOutPage.css'
 
 const CheckOutPage = () => {
+    const navigate = useNavigate()
     const dispatch = useDispatch()
     const cartdata = useSelector((state) => state?.cartuser)
     const applycouponsdData1 = useSelector((state) => state?.CouponsReducer?.AppluCouponsData)
@@ -23,14 +25,22 @@ const CheckOutPage = () => {
     const payment_method = useSelector((state) => state?.CheckOutFormData?.payment_method)
     console.log("payment_method==========>",payment_method);
     const shipping_linesData = useSelector((state) => state?.CheckOutFormData?.shipping_lines)
+    // console.log("shipping_linesData==========>",shipping_linesData);
+   
+    const shippingCost = shipping_linesData?.map((data) => data.total)
 
-    const [validation, setvalidation] = useState(false)
+    const [validation, setvalidation] = useState(true)
     const [shipping, setShipping] = useState(null)
     const [shippininput, setShippingInput] = useState(shipping_linesData)
     const [pymentinput , setPaymentinput] = useState(null)
+    const [beforeformvalidation , setBeforeformvalidation] = useState(null)
     let ordercartdata = cartdata.carts
 
-    console.log("shipping_linesData",shipping_linesData)
+
+
+  
+
+    
     const ShippinghandleChange = (e) => {
 
         const getshippingmethod = ShippingData.find((item) => item.method_id === e.target.value)
@@ -49,11 +59,11 @@ const CheckOutPage = () => {
     }
 
     const handleSubmit = (values) => {
-        setvalidation(true)
+        setvalidation(false)
         window.scroll(0, 0)
         console.log("values.country",values.Country ,values.state);
         if (values.first_name && values.last_name && values.address_1 && values.city && values.postcode && values.phone && values.email && values.country && values.state) {
-            setvalidation(false)
+            setvalidation("Success")
             console.log("not done");
         }
 
@@ -70,9 +80,25 @@ const CheckOutPage = () => {
     }
     console.log("test to it",validation);
 
+
+    
 const PlaceOrder = () => {
-    console.log("AllCheckoutData=========>",AllCheckoutData);
-    // dispatch(PostApiData(AllCheckoutData))
+    // console.log("validation==========>",!checkoutformdata);
+  
+       
+    if(validation === 'Success'){
+             
+                
+                 console.log("AllCheckoutData==========>",AllCheckoutData);
+                    dispatch(PostApiData(AllCheckoutData))
+                    navigate('/OrderData')
+                }
+                else{
+            
+                        // alert("please fill the form")
+                    
+                    } 
+ 
 }
 
 
@@ -85,12 +111,11 @@ const PlaceOrder = () => {
 
     return (
         <div className="checkoutpage">
-
-
+  
             <Container>
                 <h3 className="mt-4">CheckOut</h3>
 
-                {validation
+                {!validation
                  ? <div className="alert alert-danger ">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
                         <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
@@ -237,7 +262,7 @@ const PlaceOrder = () => {
                             <Col md={5}>
 
                                 <div className="shippingdata">
-                                    {ShippingData.map((item) => (
+                                    {ShippingData.map((item,id) => (
 
                                         <label>
                                             <input
@@ -245,8 +270,8 @@ const PlaceOrder = () => {
                                                 id="radio1"
                                                 name="radiobuttonshipping"
                                                 type="radio"
-
-                                                checked={shipping_linesData?.method_id ? item.method_id === shipping_linesData?.method_id ? shipping_linesData.method_id : null : null}
+                                                checked={ shipping_linesData ? shipping_linesData?.find((i) => i.method_id ===  item.method_id) ? item.method_id : null  : id == 0}
+                                                // checked={shipping_linesData?.method_id ? item.method_id === shipping_linesData?.method_id ? shipping_linesData.method_id : null : null}
                                                 value={item.method_id}
                                             />
 
@@ -281,8 +306,8 @@ const PlaceOrder = () => {
 
                                         <p>
                                        
-                                            {shipping_linesData && shipping_linesData?.total ? 
-                                            <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount) + parseInt(shipping_linesData?.total)}.00</div> : <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount)}.00</div>
+                                            {shipping_linesData && shippingCost ? 
+                                            <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount) + parseInt(shippingCost)}.00</div> : <div>${parseInt(cartdata.cartTotal - applycouponsdData1.amount)}.00</div>
                                             }
 
                                         </p>
@@ -292,8 +317,8 @@ const PlaceOrder = () => {
                                     <div className="displaydata">
                                         <b>
                                             <p>
-                                                {shipping_linesData && shipping_linesData?.total ? 
-                                                 <div>${parseInt(cartdata.cartTotal) + parseInt(shipping_linesData?.total)}.00</div> : <div>${(cartdata.cartTotal)}.00</div>}
+                                                {shipping_linesData && shippingCost ? 
+                                                 <div>${parseInt(cartdata.cartTotal) + parseInt(shippingCost)}.00</div> : <div>${(cartdata.cartTotal)}.00</div>}
                                             </p>
                                         </b>
 
@@ -358,6 +383,7 @@ const PlaceOrder = () => {
                                 <div className="displaydata">
 
                                     <button className="palceorderbtn" onClick={() => PlaceOrder()}>Place Order</button>
+                    
 
                                 </div>
                             </Col>
