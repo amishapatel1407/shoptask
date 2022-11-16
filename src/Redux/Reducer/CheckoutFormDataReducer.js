@@ -26,7 +26,8 @@ const init = {
     country: "",
     state: "",
   },
-orderRecivedData : []
+orderRecivedData : [],
+loading : true
 
 }
 
@@ -38,7 +39,8 @@ const CheckoutFormDataReducer = (state = init, action) => {
     case POST_API_DATA:
       return  {
         ...state,  
-        orderRecivedData : action.payload
+        orderRecivedData : action.payload,
+        loading:false
       }
 
     case GET_CHECKOUTFORM_DATA:
@@ -74,7 +76,6 @@ const CheckoutFormDataReducer = (state = init, action) => {
         }
         state.line_items.push(line_item)
       })
-      // console.log("action.payload?.coupons?.amount========",action.payload.coupons.discount);
       state.coupon_lines = []
       let FinalApplycouponsData = {
         code: action.payload?.coupons?.code || '',
@@ -82,20 +83,12 @@ const CheckoutFormDataReducer = (state = init, action) => {
       }
       state.coupon_lines.push(FinalApplycouponsData)
 
-      // console.log("finalshippingdata======>",action.payload?.shippingdata);
-      // state.shipping_lines = []
-      // let finalShippinData = {
-      //   method_id : action.payload?.shippingdata?.method_id,
-      //   method_title : action.payload?.shippingdata?.method_title,
-      //   total : String(action.payload?.shippingdata?.total)
-      // }
-      // state.shipping_lines.push(finalShippinData)
+    
 
       return {
         ...state,
         billing: billingData,
         shipping: shippingData,
-        // coupon_lines:FinalApplycouponsData 
 
 
       }

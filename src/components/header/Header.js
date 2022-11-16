@@ -46,8 +46,8 @@ function Header() {
             <Nav.Link href="#services">Services</Nav.Link>
             <Nav.Link href="#portfolio">Portfolio</Nav.Link>
             <Nav.Link href="#team">Team</Nav.Link>
-            <Nav.Link href="#contact">Contact us</Nav.Link>
-            <NavLink href="#contact" className="nav-link" to='/cart'>Cart</NavLink>
+            <NavLink className="nav-link"  to='/OrderData'>Contact us</NavLink>
+            <NavLink  className="nav-link" to='/cart'>Cart</NavLink>
             <Nav>
               <NavLink className="nav-link">
 
