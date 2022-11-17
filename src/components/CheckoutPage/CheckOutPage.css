@@ -1,55 +1,64 @@
-.orderHeading p{
+.orderHeading p {
     font-size: 20px;
     margin-top: 10px;
-    margin-bottom:10px ;
-  
+    margin-bottom: 10px;
+
 }
-.orderHeading{
-    background-color:#f8f8f8;
-    margin: 10px ;
+
+.orderHeading {
+    background-color: #f8f8f8;
+    margin: 10px;
     padding: 10px;
     width: 100%;
 }
-.displaydata p{
+
+.displaydata p {
     font-size: 20px;
     margin-top: 10px;
-    margin-bottom:10px ;
+    margin-bottom: 10px;
 }
-.displaydata{
-    margin: 10px ;
+
+.displaydata {
+    margin: 10px;
     padding: 10px;
     width: 100%;
 
 }
+
 .displaytotal p {
     font-size: 20px;
     margin-top: 10px;
-    margin-bottom:10px ;
+    margin-bottom: 10px;
 }
-.displaytotal{
+
+.displaytotal {
     padding: 20px;
 }
-.palceorderbtn{
+
+.palceorderbtn {
     background-color: black;
     color: wheat;
     width: 400px;
     padding: 15px 10px;
     font-size: 25px;
 }
-.displaypaymentdata{
-  
- 
+
+.displaypaymentdata {
+
+
     background-color: #f8f8f8;
 }
-.displaypaymentdata input{
-    margin-left: 20px;
-}
-.displaypaymentdata span{
-    font-size:20px;
+
+.displaypaymentdata input {
     margin-left: 20px;
 }
 
-.displaypaymentdata label{
+.displaypaymentdata span {
+    font-size: 20px;
+    margin-left: 20px;
+}
+
+.displaypaymentdata label {
     color: black;
     padding-bottom: 10px;
 
@@ -58,21 +67,33 @@
 .inputdata {
     background-color: #f8f8f8;
 }
-.checkbox{                                                                                                                                                      
+
+.checkbox {
     /* width: 18px; */
     margin-top: 10px;
     /* margin-left: 200px; */
 }
-.shippingdata span{
+
+.shippingdata span {
     font-size: 20px;
     margin-left: 5px;
 }
-.shippingdata{
+
+.shippingdata {
     margin: 10px;
     padding: 10px;
     width: 100%;
- 
+
 }
-.displaydata h6{
+
+.displaydata h6 {
     margin-left: 20px;
 }
+
+/* .toast {
+    overflow: hidden;
+
+    transform: translateX(calc(100% + 30px));
+
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.35);
+} */

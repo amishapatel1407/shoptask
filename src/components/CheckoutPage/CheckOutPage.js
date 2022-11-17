@@ -10,6 +10,8 @@ import { PostApiData } from '../../Redux/Action/PostData'
 import Accordion from 'react-bootstrap/Accordion';
 import { useNavigate } from "react-router-dom";
 import './CheckOutPage.css'
+import Toast from 'react-bootstrap/Toast';
+import ToastContainer from 'react-bootstrap/ToastContainer';
 
 const CheckOutPage = () => {
     const navigate = useNavigate()
@@ -35,6 +37,8 @@ const CheckOutPage = () => {
     const [pymentinput, setPaymentinput] = useState(null)
     const [beforeformvalidation, setBeforeformvalidation] = useState(null)
     const [test, setTest] = useState(null)
+    const [isdisabled, setIsDisabled] = useState(false)
+    const [position, setPosition] = useState('top-start');
     let ordercartdata = cartdata.carts
 
 
@@ -60,7 +64,11 @@ const CheckOutPage = () => {
     }
 
     const handleSubmit = (values) => {
-       
+
+        // else{
+        //     setIsDisabled(false)
+        // }
+
         console.log("values--->", values);
         setTest({ shipping_first_name: values.Shipping_first_name, shipping_last_name: values.Shipping_last_name, shipping_address_1: values.Shipping_address_1, shipping_ciy: values.Shipping_city, shipping_postcode: values.Shipping_postcode, shipping_country: values.Shipping_country, shipping_state: values.Shipping_state })
         setvalidation(false)
@@ -70,7 +78,16 @@ const CheckOutPage = () => {
             setvalidation("Success")
             console.log("not done");
         }
+        if (values) {
+            setIsDisabled("success")
 
+            console.log("AllCheckoutData==========>", AllCheckoutData);
+            console.log("isdisabled=======>", isdisabled);
+            // alert('successfully')
+        }
+        else {
+            setIsDisabled(false)
+        }
         console.log("values======>", values);
         console.log('shippininputtest', shippininput);
         dispatch(CheckFormData({
@@ -85,29 +102,9 @@ const CheckOutPage = () => {
     console.log("handleSubmit", test);
 
 
-    const renderField = ({
-        input,
-        label,
-        type,
-        meta: { touched, error, warning }
-      }) => (
-        <div>
-          <label>{label}</label>
-          <div>
-            <input {...input} placeholder={label} type={type} />
-            {touched &&
-              ((error && <span>{error}</span>) ||
-                (warning && <span>{warning}</span>))}
-          </div>
-        </div>
-      )
-
     const PlaceOrder = () => {
-        // console.log("validation==========>",!checkoutformdata);
-
 
         if (validation === 'Success') {
-            console.log("AllCheckoutData==========>", AllCheckoutData);
             // dispatch(PostApiData(AllCheckoutData))
             // navigate('/OrderData')
         }
@@ -131,6 +128,26 @@ const CheckOutPage = () => {
 
             <Container>
                 <h3 className="mt-4">CheckOut</h3>
+                {isdisabled === 'success' ?
+                  
+                        <ToastContainer position="top-end" className=" p-3">
+                            <Toast>
+                                <Toast.Header>
+                                    <img
+                                        src="holder.js/20x20?text=%20"
+                                        className="rounded me-2"
+                                        alt=""
+                                    />
+                                    <strong className="me-auto">Bootstrap</strong>
+                                    <small className="text-muted">just now</small>
+                                    <button>close</button>
+                                </Toast.Header>
+                                <Toast.Body>See? Just like this.</Toast.Body>
+                            </Toast>
+                        </ToastContainer>
+                    
+
+                    : ''}
 
                 {!validation
                     ? <div className="alert alert-danger ">
